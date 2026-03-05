@@ -192,8 +192,10 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
             "Use A, B, C for conditions. Operators: && (AND), || (OR), ! (NOT), () for grouping"
           }
           sx={{
-            '& .MuiInputBase-input': { fontSize: 13, fontFamily: 'monospace' },
-            '& .MuiFormHelperText-root': { fontSize: 11 },
+            '& .MuiInputBase-input': { fontSize: 12, fontFamily: 'monospace' },
+            '& .MuiInputBase-input::placeholder': { fontSize: '11px', opacity: 0.6 },
+            '& .MuiFormHelperText-root': { fontSize: 10 },
+            '& .MuiInputLabel-root': { fontSize: 12 },
           }}
         />
       </Box>
