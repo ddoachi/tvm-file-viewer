@@ -17,13 +17,10 @@ function App() {
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        {/* Fixed top section: AppBar + FileTabs */}
-        <Box sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: 'background.paper' }}>
-          <AppHeader />
-          <FileTabs />
-        </Box>
+        <AppHeader />
+        <FileTabs />
 
-        <Container maxWidth="xl" sx={{ flex: 1, py: 3, display: 'flex', flexDirection: 'column' }}>
+        <Container maxWidth="xl" sx={{ flex: 1, py: 3, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
           <Box sx={{ flex: 1, minHeight: 0 }}>
             <DataGrid />
           </Box>
