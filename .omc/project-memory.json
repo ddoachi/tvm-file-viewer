@@ -89,20 +89,20 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 30,
-      "lastAccessed": 1772718056349,
+      "accessCount": 31,
+      "lastAccessed": 1772718539819,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FilterPanel.tsx",
+      "accessCount": 22,
+      "lastAccessed": 1772718615919,
       "type": "file"
     },
     {
       "path": "src/main/index.ts",
       "accessCount": 18,
       "lastAccessed": 1772717613810,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/components/FilterPanel.tsx",
-      "accessCount": 13,
-      "lastAccessed": 1772718181325,
       "type": "file"
     },
     {
@@ -307,6 +307,12 @@
       "path": "src/renderer/components/StatusBar.tsx",
       "accessCount": 1,
       "lastAccessed": 1772718155738,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/expressionParser.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772718558989,
       "type": "file"
     }
   ],

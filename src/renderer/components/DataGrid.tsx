@@ -37,8 +37,27 @@ export const DataGrid: React.FC = () => {
         if (!params.data) return '';
         const depth = getTreeDepth(params.data);
         const indent = depth * 24;
-        const connector = depth > 0 ? '<span style="color: #2D7FF9; margin-right: 8px;">└─</span>' : '';
-        return `<div style="padding-left: ${indent}px; font-family: 'JetBrains Mono', monospace;">${connector}${params.value}</div>`;
+
+        // Create DOM element instead of HTML string
+        const container = document.createElement('div');
+        container.style.paddingLeft = `${indent}px`;
+        container.style.fontFamily = "'JetBrains Mono', monospace";
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+
+        if (depth > 0) {
+          const connector = document.createElement('span');
+          connector.style.color = '#2D7FF9';
+          connector.style.marginRight = '8px';
+          connector.textContent = '└─';
+          container.appendChild(connector);
+        }
+
+        const text = document.createElement('span');
+        text.textContent = params.value || '';
+        container.appendChild(text);
+
+        return container;
       },
     },
     {

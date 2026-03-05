@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Paper,
   Box,
@@ -11,20 +11,26 @@ import {
   Chip,
   Typography,
   InputAdornment,
+  Tabs,
+  Tab,
+  Alert,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import CodeIcon from '@mui/icons-material/Code';
 import type { SelectChangeEvent } from '@mui/material';
 import type { AgGridReact } from 'ag-grid-react';
 import type { CsvRow, FilterOperator } from '../types';
 import { useGroupFilter } from '../hooks/useGroupFilter';
 import { useAppStore } from '../store/appStore';
+import { parseFilterExpression } from '../services/expressionParser';
+import { applyGroupFilter } from '../services/groupFilter';
 
 interface FilterPanelProps {
   gridRef: React.RefObject<AgGridReact<CsvRow>>;
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
-  const { searchText, setSearchText } = useAppStore();
+  const { searchText, setSearchText, rows, setFilterResult } = useAppStore();
   const {
     column,
     setColumn,
@@ -37,6 +43,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
     activeConditions,
     matchedGroupCount,
   } = useGroupFilter(gridRef);
+
+  // Expression filter mode
+  const [filterMode, setFilterMode] = useState<'simple' | 'expression'>('simple');
+  const [expressionText, setExpressionText] = useState('');
+  const [expressionError, setExpressionError] = useState<string | null>(null);
 
   const handleColumnChange = (event: SelectChangeEvent) => {
     setColumn(event.target.value as keyof Omit<CsvRow, '_treePath' | '_rowIndex'>);
@@ -52,6 +63,42 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
+  };
+
+  const handleExpressionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setExpressionText(event.target.value);
+    setExpressionError(null);
+  };
+
+  const handleApplyExpression = () => {
+    const parsed = parseFilterExpression(expressionText);
+    if (!parsed) {
+      setExpressionError('Invalid expression. Use: Vnet1==VDD && Vnet2==VEXT');
+      return;
+    }
+
+    // Apply group filter with parsed conditions
+    const result = applyGroupFilter(rows, parsed.conditions);
+    setFilterResult(result);
+    gridRef.current?.api.onFilterChanged();
+    setExpressionError(null);
+  };
+
+  const handleClearExpression = () => {
+    setExpressionText('');
+    setExpressionError(null);
+    setFilterResult(null);
+    gridRef.current?.api.onFilterChanged();
+  };
+
+  const handleModeChange = (_event: React.SyntheticEvent, newMode: 'simple' | 'expression') => {
+    setFilterMode(newMode);
+    // Clear filters when switching modes
+    if (newMode === 'simple') {
+      handleClearExpression();
+    } else {
+      clearFilter();
+    }
   };
 
   const isValueDisabled = operator === 'isEmpty' || operator === 'isNotEmpty';
@@ -80,6 +127,55 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
         />
       </Box>
 
+      {/* Filter mode tabs */}
+      <Tabs value={filterMode} onChange={handleModeChange} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <Tab label="Simple" value="simple" />
+        <Tab label="Expression" value="expression" icon={<CodeIcon fontSize="small" />} iconPosition="start" />
+      </Tabs>
+
+      {/* Expression filter mode */}
+      {filterMode === 'expression' && (
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="e.g., Vnet1==VDD && Vnet2==VEXT"
+            value={expressionText}
+            onChange={handleExpressionChange}
+            error={!!expressionError}
+            helperText={expressionError || "Operators: == (equals), != (not equals), ~= (contains), ^= (starts with), $= (ends with). Combine with && (AND) or || (OR)"}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CodeIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleApplyExpression}
+              disabled={!expressionText.trim()}
+            >
+              Apply Expression
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={handleClearExpression}
+            >
+              Clear
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {/* Simple filter mode */}
+      {filterMode === 'simple' && (
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         {/* Column selector */}
         <FormControl sx={{ minWidth: 150 }} size="small">
@@ -153,6 +249,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           </Button>
         </Box>
       </Box>
+      )}
 
       {/* Active filter status */}
       {activeConditions.length > 0 && (
