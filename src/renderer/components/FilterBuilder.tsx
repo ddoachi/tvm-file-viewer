@@ -157,7 +157,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
       {/* Condition Blocks */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
         {conditions.map((condition, index) => (
-          <Box key={condition.id}>
+          <Box key={condition.id} sx={{ mb: 1 }}>
             <ConditionBlock
               condition={condition}
               onChange={(c) => handleConditionChange(index, c)}
@@ -166,67 +166,11 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
               showDragHandle={false}
               variable={indexToVariable(index)}
             />
-
-            {/* Connector (AND/OR) between blocks */}
-            {index < conditions.length - 1 && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', my: 0.5 }}>
-                <ToggleButtonGroup
-                  value={connectors[index] || 'AND'}
-                  exclusive
-                  onChange={(_e, value) => {
-                    if (value !== null) {
-                      handleConnectorChange(index, value);
-                    }
-                  }}
-                  size="small"
-                  sx={{ height: 24 }}
-                >
-                  <ToggleButton
-                    value="AND"
-                    sx={{
-                      fontSize: 11,
-                      px: 1.5,
-                      py: 0.25,
-                      fontWeight: 600,
-                      backgroundColor: connectors[index] === 'AND' ? '#1976d2' : undefined,
-                      color: connectors[index] === 'AND' ? 'white' : undefined,
-                      '&.Mui-selected': {
-                        backgroundColor: '#1976d2',
-                        color: 'white',
-                        '&:hover': {
-                          backgroundColor: '#1565c0',
-                        },
-                      },
-                    }}
-                  >
-                    AND
-                  </ToggleButton>
-                  <ToggleButton
-                    value="OR"
-                    sx={{
-                      fontSize: 11,
-                      px: 1.5,
-                      py: 0.25,
-                      fontWeight: 600,
-                      backgroundColor: connectors[index] === 'OR' ? '#388e3c' : undefined,
-                      color: connectors[index] === 'OR' ? 'white' : undefined,
-                      '&.Mui-selected': {
-                        backgroundColor: '#388e3c',
-                        color: 'white',
-                        '&:hover': {
-                          backgroundColor: '#2e7d32',
-                        },
-                      },
-                    }}
-                  >
-                    OR
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-            )}
           </Box>
         ))}
       </Box>
+
+      {/* AND/OR toggles removed - use formula input below instead */}
 
       {/* Boolean Formula */}
       <Box sx={{ mt: 2, mb: 2 }}>

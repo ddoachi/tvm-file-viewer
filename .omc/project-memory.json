@@ -100,6 +100,12 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/components/FilterBuilder.tsx",
+      "accessCount": 24,
+      "lastAccessed": 1772723682857,
+      "type": "file"
+    },
+    {
       "path": "src/main/index.ts",
       "accessCount": 21,
       "lastAccessed": 1772719832683,
@@ -109,12 +115,6 @@
       "path": "src/renderer/components/AppHeader.tsx",
       "accessCount": 16,
       "lastAccessed": 1772722554425,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/components/FilterBuilder.tsx",
-      "accessCount": 16,
-      "lastAccessed": 1772723232263,
       "type": "file"
     },
     {
