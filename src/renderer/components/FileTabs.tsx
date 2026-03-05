@@ -80,9 +80,7 @@ export const FileTabs: React.FC = () => {
                     width: 16,
                     height: 16,
                     '&:hover': {
-                      bgcolor: themeMode === 'light'
-                        ? colors.light.background.hover
-                        : colors.dark.background.hover,
+                      bgcolor: themeMode === 'light' ? '#e0e0e0' : '#424242',
                     },
                   }}
                 >

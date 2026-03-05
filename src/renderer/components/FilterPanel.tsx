@@ -229,6 +229,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             value={column}
             label="Column"
             onChange={handleColumnChange}
+            sx={{ fontSize: '12px', height: '32px' }}
           >
             <MenuItem value="Net">Net</MenuItem>
             <MenuItem value="Group">Group</MenuItem>
@@ -246,6 +247,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             value={operator}
             label="Operator"
             onChange={handleOperatorChange}
+            sx={{ fontSize: '12px', height: '32px' }}
           >
             <MenuItem value="equals">Equals</MenuItem>
             <MenuItem value="notEquals">Not Equals</MenuItem>
