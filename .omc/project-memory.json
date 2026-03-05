@@ -148,6 +148,12 @@
       "type": "file"
     },
     {
+      "path": "package.json",
+      "accessCount": 8,
+      "lastAccessed": 1772721178276,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/main.tsx",
       "accessCount": 7,
       "lastAccessed": 1772717896152,
@@ -157,12 +163,6 @@
       "path": "src/preload/index.ts",
       "accessCount": 6,
       "lastAccessed": 1772716758753,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 6,
-      "lastAccessed": 1772717105322,
       "type": "file"
     },
     {
@@ -331,6 +331,18 @@
       "path": "src/renderer/components/FileTabs.tsx",
       "accessCount": 1,
       "lastAccessed": 1772721064601,
+      "type": "file"
+    },
+    {
+      "path": ".npmrc",
+      "accessCount": 1,
+      "lastAccessed": 1772721172834,
+      "type": "file"
+    },
+    {
+      "path": "BUILD_GUIDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1772721210363,
       "type": "file"
     }
   ],

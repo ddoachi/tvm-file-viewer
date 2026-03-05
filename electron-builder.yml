@@ -1,0 +1,56 @@
+# Electron Builder Configuration
+# For use with local Electron binary (no GitHub download)
+
+appId: com.totalvoltagemanager.app
+productName: Total Voltage Manager
+copyright: Copyright © 2026
+
+# Use local Electron binary instead of downloading from GitHub
+# Set ELECTRON_MIRROR to empty or local path
+electronDownload:
+  mirror: ""
+  customDir: ""
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - out/**/*
+  - package.json
+
+# Linux build configuration
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
+  icon: build/icon.png
+
+# Windows build configuration
+win:
+  target:
+    - nsis
+    - portable
+  icon: build/icon.ico
+
+# macOS build configuration
+mac:
+  target:
+    - dmg
+    - zip
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+
+# NSIS installer configuration (Windows)
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+# Compression
+compression: normal
+
+# Publish configuration (disabled for local builds)
+publish: null
