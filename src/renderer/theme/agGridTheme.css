@@ -71,6 +71,21 @@
   height: 100%;
 }
 
+/* Column resize handle/separator */
+.ag-theme-tvm-light .ag-header-cell-resize,
+.ag-theme-tvm-dark .ag-header-cell-resize {
+  background-color: var(--ag-border-color);
+  width: 1px;
+  opacity: 0.5;
+}
+
+.ag-theme-tvm-light .ag-header-cell-resize:hover,
+.ag-theme-tvm-dark .ag-header-cell-resize:hover {
+  opacity: 1;
+  background-color: var(--ag-input-focus-border-color);
+  width: 2px;
+}
+
 /* ============================================================================
    DARK THEME BASE
    ============================================================================ */
