@@ -33,7 +33,13 @@ interface FilterPanelProps {
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
-  const { searchText, setSearchText, rows, setFilterResult } = useAppStore();
+  const { searchText, setSearchText, openFiles, activeFileId, setFilterResult } = useAppStore();
+
+  // Get rows from active file
+  const rows = useMemo(() => {
+    const activeFile = openFiles.find(f => f.id === activeFileId);
+    return activeFile?.rows || [];
+  }, [openFiles, activeFileId]);
   const {
     column,
     setColumn,
