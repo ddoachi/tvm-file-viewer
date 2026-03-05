@@ -49,6 +49,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
     }
 
     console.log(`FilterBuilder: Processing ${rows.length} rows`);
+    console.log('FilterBuilder: Sample row structure:', rows[0]);
 
     rows.forEach(row => {
       columns.forEach(col => {
