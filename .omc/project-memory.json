@@ -107,8 +107,14 @@
     },
     {
       "path": "src/renderer/components/AppHeader.tsx",
+      "accessCount": 16,
+      "lastAccessed": 1772722554425,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/App.tsx",
       "accessCount": 14,
-      "lastAccessed": 1772720975833,
+      "lastAccessed": 1772722572393,
       "type": "file"
     },
     {
@@ -127,12 +133,6 @@
       "path": "src/renderer/theme/agGridTheme.css",
       "accessCount": 12,
       "lastAccessed": 1772722527135,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/App.tsx",
-      "accessCount": 11,
-      "lastAccessed": 1772721437215,
       "type": "file"
     },
     {

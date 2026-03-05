@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Container, Box } from '@mui/material';
+import { Container, Box, Toolbar } from '@mui/material';
 import { lightTheme, darkTheme } from './theme/muiTheme';
 import { AppHeader } from './components/AppHeader';
 import { FileTabs } from './components/FileTabs';
@@ -18,6 +18,7 @@ function App() {
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <AppHeader />
+        <Toolbar /> {/* Spacer for fixed AppBar */}
         <FileTabs />
 
         <Container maxWidth="xl" sx={{ flex: 1, py: 3, display: 'flex', flexDirection: 'column' }}>
