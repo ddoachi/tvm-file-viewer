@@ -4,7 +4,7 @@ import { parseJson } from '../services/jsonParser';
 import { computeTreePaths } from '../services/treeTransformer';
 
 export function useCsvImport() {
-  const { setRows, setParseErrors, setLoading, isLoading } = useAppStore();
+  const { addFile, setParseErrors, setLoading, isLoading } = useAppStore();
 
   const importCsv = async () => {
     try {
@@ -55,8 +55,15 @@ export function useCsvImport() {
       // Extract filename from path
       const fileName = filePath.split(/[\\/]/).pop() || 'unknown';
 
-      // Update store
-      setRows(rowsWithRelations, fileName);
+      // Generate unique file ID
+      const fileId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Update store with new file
+      addFile({
+        id: fileId,
+        fileName,
+        rows: rowsWithRelations,
+      });
 
     } catch (error) {
       console.error('❌ CSV Import Error:', error);

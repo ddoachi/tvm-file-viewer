@@ -1,15 +1,23 @@
 import { create } from 'zustand';
 import type { CsvRow, FilterResult } from '../types';
 
-interface AppState {
+export interface OpenFile {
+  id: string;
+  fileName: string;
   rows: CsvRow[];
-  fileName: string | null;
+}
+
+interface AppState {
+  openFiles: OpenFile[];
+  activeFileId: string | null;
   parseErrors: string[];
   isLoading: boolean;
   filterResult: FilterResult | null;
   searchText: string;
   themeMode: 'light' | 'dark';
-  setRows: (rows: CsvRow[], fileName: string) => void;
+  addFile: (file: OpenFile) => void;
+  removeFile: (fileId: string) => void;
+  setActiveFile: (fileId: string) => void;
   setParseErrors: (errors: string[]) => void;
   setLoading: (loading: boolean) => void;
   setFilterResult: (result: FilterResult | null) => void;
@@ -19,15 +27,42 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  rows: [],
-  fileName: null,
+  openFiles: [],
+  activeFileId: null,
   parseErrors: [],
   isLoading: false,
   filterResult: null,
   searchText: '',
   themeMode: 'light',
 
-  setRows: (rows, fileName) => set({ rows, fileName, parseErrors: [] }),
+  addFile: (file) => set((state) => ({
+    openFiles: [...state.openFiles, file],
+    activeFileId: file.id,
+    parseErrors: [],
+  })),
+
+  removeFile: (fileId) => set((state) => {
+    const newFiles = state.openFiles.filter(f => f.id !== fileId);
+    let newActiveId = state.activeFileId;
+
+    // If removing active file, switch to another
+    if (state.activeFileId === fileId) {
+      if (newFiles.length > 0) {
+        const removedIndex = state.openFiles.findIndex(f => f.id === fileId);
+        // Try to activate the next file, or previous if it was the last
+        newActiveId = newFiles[Math.min(removedIndex, newFiles.length - 1)]?.id || null;
+      } else {
+        newActiveId = null;
+      }
+    }
+
+    return {
+      openFiles: newFiles,
+      activeFileId: newActiveId,
+    };
+  }),
+
+  setActiveFile: (fileId) => set({ activeFileId: fileId }),
 
   setParseErrors: (errors) => set({ parseErrors: errors }),
 
@@ -39,5 +74,13 @@ export const useAppStore = create<AppState>((set) => ({
 
   setThemeMode: (mode) => set({ themeMode: mode }),
 
-  reset: () => set({ rows: [], fileName: null, parseErrors: [], isLoading: false, filterResult: null, searchText: '', themeMode: 'light' }),
+  reset: () => set({
+    openFiles: [],
+    activeFileId: null,
+    parseErrors: [],
+    isLoading: false,
+    filterResult: null,
+    searchText: '',
+    themeMode: 'light'
+  }),
 }));

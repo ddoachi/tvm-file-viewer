@@ -89,8 +89,8 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 43,
-      "lastAccessed": 1772720979102,
+      "accessCount": 45,
+      "lastAccessed": 1772721089535,
       "type": "file"
     },
     {
@@ -112,9 +112,27 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/hooks/useCsvImport.ts",
+      "accessCount": 11,
+      "lastAccessed": 1772721074907,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/store/appStore.ts",
+      "accessCount": 10,
+      "lastAccessed": 1772721051286,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/App.tsx",
+      "accessCount": 10,
+      "lastAccessed": 1772721084572,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/types/index.ts",
-      "accessCount": 8,
-      "lastAccessed": 1772716759114,
+      "accessCount": 9,
+      "lastAccessed": 1772721036437,
       "type": "file"
     },
     {
@@ -124,27 +142,9 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/hooks/useCsvImport.ts",
-      "accessCount": 8,
-      "lastAccessed": 1772719874353,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/theme/muiTheme.ts",
       "accessCount": 8,
       "lastAccessed": 1772720975715,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/store/appStore.ts",
-      "accessCount": 8,
-      "lastAccessed": 1772720976159,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/App.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1772720979173,
       "type": "file"
     },
     {
@@ -199,6 +199,12 @@
       "path": "tests/debug-preload.spec.ts",
       "accessCount": 3,
       "lastAccessed": 1772718035834,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/StatusBar.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1772721100565,
       "type": "file"
     },
     {
@@ -304,12 +310,6 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/components/StatusBar.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772718155738,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/services/expressionParser.ts",
       "accessCount": 1,
       "lastAccessed": 1772718558989,
@@ -325,6 +325,12 @@
       "path": "src/renderer/components/NetCellRenderer.tsx",
       "accessCount": 1,
       "lastAccessed": 1772720156567,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FileTabs.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772721064601,
       "type": "file"
     }
   ],

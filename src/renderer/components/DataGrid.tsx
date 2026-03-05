@@ -8,8 +8,12 @@ import { NetCellRenderer } from './NetCellRenderer';
 import { colors, typography } from '../theme/designSystem';
 
 export const DataGrid: React.FC = () => {
-  const { rows, filterResult, searchText, themeMode } = useAppStore();
+  const { openFiles, activeFileId, filterResult, searchText, themeMode } = useAppStore();
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
+
+  // Get rows from active file
+  const activeFile = openFiles.find(f => f.id === activeFileId);
+  const rows = activeFile?.rows || [];
 
   // Calculate tree depth for indentation
   const getTreeDepth = useCallback((row: CsvRow): number => {
