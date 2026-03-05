@@ -89,20 +89,44 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 17,
-      "lastAccessed": 1772715954265,
+      "accessCount": 18,
+      "lastAccessed": 1772716044980,
       "type": "file"
     },
     {
       "path": "src/main/index.ts",
-      "accessCount": 13,
-      "lastAccessed": 1772715916482,
+      "accessCount": 15,
+      "lastAccessed": 1772716758199,
       "type": "file"
     },
     {
       "path": "src/renderer/types/index.ts",
+      "accessCount": 8,
+      "lastAccessed": 1772716759114,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/agGridTheme.css",
+      "accessCount": 8,
+      "lastAccessed": 1772716811634,
+      "type": "file"
+    },
+    {
+      "path": "src/preload/index.ts",
       "accessCount": 6,
-      "lastAccessed": 1772715921232,
+      "lastAccessed": 1772716758753,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FilterPanel.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1772716777896,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/hooks/useCsvImport.ts",
+      "accessCount": 6,
+      "lastAccessed": 1772716827494,
       "type": "file"
     },
     {
@@ -124,21 +148,15 @@
       "type": "file"
     },
     {
-      "path": "src/preload/index.ts",
-      "accessCount": 4,
-      "lastAccessed": 1772715919355,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/components/FilterPanel.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1772715932933,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/App.tsx",
       "accessCount": 4,
       "lastAccessed": 1772715940253,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/store/appStore.ts",
+      "accessCount": 4,
+      "lastAccessed": 1772716050939,
       "type": "file"
     },
     {
@@ -148,15 +166,21 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/hooks/useCsvImport.ts",
+      "path": "src/renderer/services/csvParser.ts",
       "accessCount": 3,
-      "lastAccessed": 1772715810364,
+      "lastAccessed": 1772716044013,
       "type": "file"
     },
     {
-      "path": "src/renderer/store/appStore.ts",
+      "path": "src/renderer/services/treeTransformer.ts",
       "accessCount": 3,
-      "lastAccessed": 1772715913044,
+      "lastAccessed": 1772716044536,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/designSystem.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772716046066,
       "type": "file"
     },
     {
@@ -166,27 +190,15 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/services/csvParser.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772715752704,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/services/treeTransformer.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772715761639,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/theme/examples.tsx",
       "accessCount": 2,
       "lastAccessed": 1772715899512,
       "type": "file"
     },
     {
-      "path": "src/renderer/theme/designSystem.ts",
+      "path": "src/renderer/services/jsonParser.ts",
       "accessCount": 2,
-      "lastAccessed": 1772715901920,
+      "lastAccessed": 1772716049416,
       "type": "file"
     },
     {
@@ -220,12 +232,6 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/theme/agGridTheme.css",
-      "accessCount": 1,
-      "lastAccessed": 1772715393223,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/theme/README.md",
       "accessCount": 1,
       "lastAccessed": 1772715508162,
@@ -238,16 +244,28 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/services/jsonParser.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772715768927,
-      "type": "file"
-    },
-    {
       "path": "test-data.json",
       "accessCount": 1,
       "lastAccessed": 1772715848616,
       "type": "file"
+    },
+    {
+      "path": "src/renderer/services/groupFilter.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772716050413,
+      "type": "file"
+    },
+    {
+      "path": "src/main",
+      "accessCount": 1,
+      "lastAccessed": 1772716060126,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1772716061233,
+      "type": "directory"
     }
   ],
   "userDirectives": []

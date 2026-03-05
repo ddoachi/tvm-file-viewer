@@ -8,6 +8,11 @@ export function useCsvImport() {
 
   const importCsv = async () => {
     try {
+      // Check if Electron API is available
+      if (!window.electronAPI) {
+        throw new Error('Electron API not available. Please restart the application.');
+      }
+
       setLoading(true);
       setParseErrors([]);
 

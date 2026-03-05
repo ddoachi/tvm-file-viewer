@@ -44,3 +44,6 @@
 {"t":0,"agent":"a30329f","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":50267}
 {"t":0,"agent":"a81fe46","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":64092}
 {"t":0,"agent":"aa9efea","agent_type":"executor","event":"agent_stop","success":true,"duration_ms":90247}
+{"t":0,"agent":"a4d5704","agent_type":"architect","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a4d5704","agent_type":"architect","event":"agent_stop","success":true,"duration_ms":100991}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"oh-my-claudecode:cancel"}
