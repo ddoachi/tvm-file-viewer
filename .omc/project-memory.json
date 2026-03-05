@@ -148,6 +148,12 @@
       "type": "file"
     },
     {
+      "path": "package.json",
+      "accessCount": 11,
+      "lastAccessed": 1772726182968,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/types/index.ts",
       "accessCount": 10,
       "lastAccessed": 1772721254658,
@@ -163,12 +169,6 @@
       "path": "src/renderer/theme/muiTheme.ts",
       "accessCount": 9,
       "lastAccessed": 1772721436265,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 9,
-      "lastAccessed": 1772721444574,
       "type": "file"
     },
     {

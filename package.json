@@ -1,6 +1,12 @@
 {
   "name": "total-voltage-manager",
   "version": "0.1.0",
+  "description": "Professional voltage netlist viewer for DRAM design engineers",
+  "author": {
+    "name": "BH Support Team",
+    "email": "support@bh.company"
+  },
+  "homepage": "https://github.com/bh-support/total-voltage-manager",
   "type": "module",
   "main": "out/main/index.js",
   "scripts": {
