@@ -130,6 +130,12 @@
       "type": "file"
     },
     {
+      "path": "package.json",
+      "accessCount": 6,
+      "lastAccessed": 1772717105322,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/index.html",
       "accessCount": 5,
       "lastAccessed": 1772715452419,
@@ -139,12 +145,6 @@
       "path": "src/renderer/components/AppHeader.tsx",
       "accessCount": 5,
       "lastAccessed": 1772715781768,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 4,
-      "lastAccessed": 1772715317682,
       "type": "file"
     },
     {
@@ -203,8 +203,8 @@
     },
     {
       "path": "electron-vite.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772715301663,
+      "accessCount": 2,
+      "lastAccessed": 1772716963410,
       "type": "file"
     },
     {
@@ -266,6 +266,24 @@
       "accessCount": 1,
       "lastAccessed": 1772716061233,
       "type": "directory"
+    },
+    {
+      "path": "tests/electron-api.spec.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772717037819,
+      "type": "file"
+    },
+    {
+      "path": "playwright.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772717040020,
+      "type": "file"
+    },
+    {
+      "path": "tests/services.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772717088849,
+      "type": "file"
     }
   ],
   "userDirectives": []
