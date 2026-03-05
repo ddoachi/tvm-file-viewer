@@ -23,9 +23,10 @@ import type { AgGridReact } from 'ag-grid-react';
 import type { CsvRow, FilterOperator } from '../types';
 import { useGroupFilter } from '../hooks/useGroupFilter';
 import { useAppStore } from '../store/appStore';
-import { parseFilterExpression } from '../services/expressionParser';
+import { parseFilterExpression, evaluateExpression } from '../services/expressionParser';
 import { applyGroupFilter } from '../services/groupFilter';
 import { FilterBuilder } from './FilterBuilder';
+import { parseFormula } from '../services/formulaParser';
 
 interface FilterPanelProps {
   gridRef: React.RefObject<AgGridReact<CsvRow>>;
@@ -105,17 +106,105 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
 
   const handleVisualApply = (expression: string) => {
     setExpressionText(expression);
-    const parsed = parseFilterExpression(expression);
-    if (!parsed) {
-      setExpressionError('Invalid expression generated from visual builder');
-      return;
-    }
 
-    // Apply group filter with parsed conditions
-    const result = applyGroupFilter(rows, parsed.conditions);
-    setFilterResult(result);
-    gridRef.current?.api.onFilterChanged();
-    setExpressionError(null);
+    // Check if this is a formula-based expression
+    if (expression.startsWith('FORMULA:')) {
+      // Format: FORMULA:formula:cond1|||cond2|||cond3
+      const parts = expression.substring(8).split(':');
+      if (parts.length !== 2) {
+        setExpressionError('Invalid formula format');
+        return;
+      }
+
+      const formula = parts[0];
+      const conditionStrings = parts[1].split('|||');
+
+      // Parse each condition
+      const conditions = conditionStrings.map(condStr => {
+        const parsed = parseFilterExpression(condStr);
+        return parsed?.conditions[0];
+      }).filter(Boolean);
+
+      if (conditions.length === 0) {
+        setExpressionError('No valid conditions in formula');
+        return;
+      }
+
+      // Parse the formula
+      const variables = new Set(
+        conditions.map((_, index) => String.fromCharCode(65 + index))
+      );
+      const parseResult = parseFormula(formula, variables);
+
+      if (!parseResult.isValid || !parseResult.evaluate) {
+        setExpressionError(parseResult.error || 'Invalid formula');
+        return;
+      }
+
+      // Filter rows using formula
+      const filteredRows = rows.filter(row => {
+        // Evaluate each condition
+        const varMap = new Map<string, boolean>();
+        conditions.forEach((cond, index) => {
+          if (cond) {
+            const varName = String.fromCharCode(65 + index);
+            const fieldValue = row[cond.field]?.toString().toLowerCase() || '';
+            const targetValue = cond.value.toLowerCase();
+
+            let matches = false;
+            switch (cond.operator) {
+              case 'equals':
+                matches = fieldValue === targetValue;
+                break;
+              case 'notEquals':
+                matches = fieldValue !== targetValue;
+                break;
+              case 'contains':
+                matches = fieldValue.includes(targetValue);
+                break;
+              case 'startsWith':
+                matches = fieldValue.startsWith(targetValue);
+                break;
+              case 'endsWith':
+                matches = fieldValue.endsWith(targetValue);
+                break;
+              default:
+                matches = false;
+            }
+            varMap.set(varName, matches);
+          }
+        });
+
+        // Evaluate formula
+        return parseResult.evaluate!(varMap);
+      });
+
+      // Apply group expansion to filtered rows
+      const result = applyGroupFilter(rows, conditions);
+      // Override matched rows with formula-filtered rows
+      const filteredIds = new Set(filteredRows.map(r => r.id));
+      const finalResult = {
+        ...result,
+        matchedRows: rows.filter(r => filteredIds.has(r.id) || (r.parentId && filteredIds.has(r.parentId))),
+      };
+
+      setFilterResult(finalResult);
+      gridRef.current?.api.onFilterChanged();
+      setExpressionError(null);
+    } else {
+      // Regular expression-based filtering
+      const parsed = parseFilterExpression(expression);
+      if (!parsed) {
+        setExpressionError('Invalid expression generated from visual builder');
+        return;
+      }
+
+      // Apply group filter with parsed conditions
+      const result = applyGroupFilter(rows, parsed.conditions);
+      setFilterResult(result);
+      gridRef.current?.api.onFilterChanged();
+      setExpressionError(null);
+    }
   };
 
   const handleVisualClear = () => {

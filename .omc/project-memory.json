@@ -88,15 +88,15 @@
   },
   "hotPaths": [
     {
-      "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 46,
-      "lastAccessed": 1772721436746,
+      "path": "src/renderer/components/FilterPanel.tsx",
+      "accessCount": 50,
+      "lastAccessed": 1772723221199,
       "type": "file"
     },
     {
-      "path": "src/renderer/components/FilterPanel.tsx",
+      "path": "src/renderer/components/DataGrid.tsx",
       "accessCount": 46,
-      "lastAccessed": 1772722793143,
+      "lastAccessed": 1772721436746,
       "type": "file"
     },
     {
@@ -109,6 +109,12 @@
       "path": "src/renderer/components/AppHeader.tsx",
       "accessCount": 16,
       "lastAccessed": 1772722554425,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FilterBuilder.tsx",
+      "accessCount": 16,
+      "lastAccessed": 1772723232263,
       "type": "file"
     },
     {
@@ -160,15 +166,15 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/main.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1772717896152,
+      "path": "src/renderer/components/ConditionBlock.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1772723228911,
       "type": "file"
     },
     {
-      "path": "src/renderer/components/FilterBuilder.tsx",
+      "path": "src/renderer/main.tsx",
       "accessCount": 7,
-      "lastAccessed": 1772721845877,
+      "lastAccessed": 1772717896152,
       "type": "file"
     },
     {
@@ -220,9 +226,9 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/components/ConditionBlock.tsx",
+      "path": "src/renderer/services/expressionParser.ts",
       "accessCount": 3,
-      "lastAccessed": 1772722470752,
+      "lastAccessed": 1772723151251,
       "type": "file"
     },
     {
@@ -247,12 +253,6 @@
       "path": "out/main/index.js",
       "accessCount": 2,
       "lastAccessed": 1772717597840,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/services/expressionParser.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772721248164,
       "type": "file"
     },
     {
@@ -374,6 +374,18 @@
       "accessCount": 1,
       "lastAccessed": 1772722794145,
       "type": "directory"
+    },
+    {
+      "path": "src/renderer/services/formulaParser.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772723093532,
+      "type": "file"
+    },
+    {
+      "path": "tests/formulaParser.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772723212064,
+      "type": "file"
     }
   ],
   "userDirectives": []

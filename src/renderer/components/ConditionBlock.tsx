@@ -24,6 +24,7 @@ interface ConditionBlockProps {
   onDelete: () => void;
   columnValues: Map<string, Set<string>>;
   showDragHandle?: boolean;
+  variable?: string;
 }
 
 const COLUMNS: Array<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>> = ['Net', 'Group', 'Vnet1', 'Vnet2'];
@@ -42,6 +43,7 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
   onDelete,
   columnValues,
   showDragHandle = false,
+  variable,
 }) => {
   // Get unique values for selected column
   const valueOptions = useMemo(() => {
@@ -95,6 +97,27 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
             fontSize: 20,
           }}
         />
+      )}
+
+      {/* Variable Label */}
+      {variable && (
+        <Box
+          sx={{
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            backgroundColor: '#2D7FF9',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12,
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+        >
+          {variable}
+        </Box>
       )}
 
       {/* Column Selector */}

@@ -5,10 +5,13 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  TextField,
+  Alert,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { ConditionBlock, type Condition } from './ConditionBlock';
 import type { CsvRow } from '../types/index';
+import { parseFormula, indexToVariable } from '../services/formulaParser';
 
 // Simple UUID generator
 const generateId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -28,6 +31,8 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
     { id: generateId(), column: '', operator: '==', value: '' },
   ]);
   const [connectors, setConnectors] = useState<Array<'AND' | 'OR'>>([]);
+  const [formula, setFormula] = useState<string>('');
+  const [formulaError, setFormulaError] = useState<string>('');
 
   // Extract unique values for each column
   const columnValues = useMemo(() => {
@@ -100,22 +105,48 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
       return;
     }
 
-    const expressionParts = validConditions.map((c, index) => {
-      const condStr = `${c.column}${c.operator}${c.value}`;
-      if (index === 0) {
-        return condStr;
-      }
-      const connector = connectors[index - 1] === 'OR' ? ' || ' : ' && ';
-      return `${connector}${condStr}`;
-    });
+    // If formula is provided, validate it
+    if (formula.trim()) {
+      const variables = new Set(
+        validConditions.map((_, index) => indexToVariable(index))
+      );
+      const parseResult = parseFormula(formula, variables);
 
-    const expression = expressionParts.join('');
-    onApply(expression);
-  }, [conditions, connectors, onApply]);
+      if (!parseResult.isValid) {
+        setFormulaError(parseResult.error || 'Invalid formula');
+        return;
+      }
+
+      setFormulaError('');
+
+      // Build expression with formula
+      const expressionParts = validConditions.map((c) => {
+        return `${c.column}${c.operator}${c.value}`;
+      });
+
+      // Pass formula to parent (parent will need to handle formula evaluation)
+      onApply(`FORMULA:${formula}:${expressionParts.join('|||')}`);
+    } else {
+      // No formula - use simple AND/OR connectors
+      const expressionParts = validConditions.map((c, index) => {
+        const condStr = `${c.column}${c.operator}${c.value}`;
+        if (index === 0) {
+          return condStr;
+        }
+        const connector = connectors[index - 1] === 'OR' ? ' || ' : ' && ';
+        return `${connector}${condStr}`;
+      });
+
+      const expression = expressionParts.join('');
+      onApply(expression);
+    }
+  }, [conditions, connectors, formula, onApply]);
 
   const handleClear = useCallback(() => {
     setConditions([{ id: generateId(), column: '', operator: '==', value: '' }]);
     setConnectors([]);
+    setFormula('');
+    setFormulaError('');
     onClear();
   }, [onClear]);
 
@@ -133,6 +164,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
               onDelete={() => handleDeleteCondition(index)}
               columnValues={columnValues}
               showDragHandle={false}
+              variable={indexToVariable(index)}
             />
 
             {/* Connector (AND/OR) between blocks */}
@@ -196,6 +228,34 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
         ))}
       </Box>
 
+      {/* Boolean Formula */}
+      <Box sx={{ mt: 2, mb: 2 }}>
+        <TextField
+          fullWidth
+          size="small"
+          label="Boolean Formula (Optional)"
+          placeholder="e.g., A || (B && C)"
+          value={formula}
+          onChange={(e) => setFormula(e.target.value)}
+          error={!!formulaError}
+          helperText={
+            formulaError ||
+            "Use A, B, C for conditions. Operators: && (AND), || (OR), ! (NOT), () for grouping"
+          }
+          sx={{
+            '& .MuiInputBase-input': { fontSize: 13, fontFamily: 'monospace' },
+            '& .MuiFormHelperText-root': { fontSize: 11 },
+          }}
+        />
+      </Box>
+
+      {/* Formula Error Alert */}
+      {formulaError && (
+        <Alert severity="error" sx={{ mb: 2, fontSize: 12 }}>
+          {formulaError}
+        </Alert>
+      )}
+
       {/* Action Buttons */}
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <Button
@@ -234,7 +294,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
 
       {/* Helper text */}
       <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', fontSize: 11 }}>
-        Build filters visually. Use AND to match all conditions, OR to match any condition.
+        Build filters visually. Use AND/OR connectors or enter a custom boolean formula above.
       </Typography>
     </Box>
   );
