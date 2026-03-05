@@ -182,6 +182,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             onChange={handleExpressionChange}
             onKeyDown={(e) => e.key === 'Enter' && handleApplyExpression()}
             error={!!expressionError}
+            inputProps={{ style: { fontSize: '12px' } }}
+            InputLabelProps={{ style: { fontSize: '12px' } }}
             helperText={expressionError || "Operators: == (equals), != (not equals), ~= (contains), ^= (starts with), $= (ends with). Combine with && (AND) or || (OR)"}
             InputProps={{
               startAdornment: (
@@ -266,6 +268,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           onChange={handleValueChange}
           disabled={isValueDisabled}
           sx={{ minWidth: 200 }}
+          inputProps={{ style: { fontSize: '12px' } }}
+          InputLabelProps={{ style: { fontSize: '12px' } }}
         />
 
         {/* Action buttons */}
