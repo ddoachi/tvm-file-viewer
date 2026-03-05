@@ -251,8 +251,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
       </Box>
       )}
 
-      {/* Active filter status */}
-      {activeConditions.length > 0 && (
+      {/* Active filter status - only show in simple mode */}
+      {filterMode === 'simple' && activeConditions.length > 0 && (
         <Box sx={{ mt: 2 }}>
           <Chip
             label={`${matchedGroupCount} group${matchedGroupCount !== 1 ? 's' : ''} matched`}
