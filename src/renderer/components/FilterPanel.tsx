@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CodeIcon from '@mui/icons-material/Code';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import type { SelectChangeEvent } from '@mui/material';
 import type { AgGridReact } from 'ag-grid-react';
 import type { CsvRow, FilterOperator } from '../types';
@@ -24,6 +25,7 @@ import { useGroupFilter } from '../hooks/useGroupFilter';
 import { useAppStore } from '../store/appStore';
 import { parseFilterExpression } from '../services/expressionParser';
 import { applyGroupFilter } from '../services/groupFilter';
+import { FilterBuilder } from './FilterBuilder';
 
 interface FilterPanelProps {
   gridRef: React.RefObject<AgGridReact<CsvRow>>;
@@ -45,7 +47,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
   } = useGroupFilter(gridRef);
 
   // Expression filter mode
-  const [filterMode, setFilterMode] = useState<'simple' | 'expression'>('simple');
+  const [filterMode, setFilterMode] = useState<'simple' | 'expression' | 'visual'>('simple');
   const [expressionText, setExpressionText] = useState('');
   const [expressionError, setExpressionError] = useState<string | null>(null);
 
@@ -91,14 +93,36 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
     gridRef.current?.api.onFilterChanged();
   };
 
-  const handleModeChange = (_event: React.SyntheticEvent, newMode: 'simple' | 'expression') => {
+  const handleModeChange = (_event: React.SyntheticEvent, newMode: 'simple' | 'expression' | 'visual') => {
     setFilterMode(newMode);
     // Clear filters when switching modes
     if (newMode === 'simple') {
       handleClearExpression();
-    } else {
+    } else if (newMode === 'expression' || newMode === 'visual') {
       clearFilter();
     }
+  };
+
+  const handleVisualApply = (expression: string) => {
+    setExpressionText(expression);
+    const parsed = parseFilterExpression(expression);
+    if (!parsed) {
+      setExpressionError('Invalid expression generated from visual builder');
+      return;
+    }
+
+    // Apply group filter with parsed conditions
+    const result = applyGroupFilter(rows, parsed.conditions);
+    setFilterResult(result);
+    gridRef.current?.api.onFilterChanged();
+    setExpressionError(null);
+  };
+
+  const handleVisualClear = () => {
+    setExpressionText('');
+    setExpressionError(null);
+    setFilterResult(null);
+    gridRef.current?.api.onFilterChanged();
   };
 
   const isValueDisabled = operator === 'isEmpty' || operator === 'isNotEmpty';
@@ -131,7 +155,19 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
       <Tabs value={filterMode} onChange={handleModeChange} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider', minHeight: 32 }}>
         <Tab label="Simple" value="simple" sx={{ minHeight: 32, py: 0.5 }} />
         <Tab label="Expression" value="expression" icon={<CodeIcon fontSize="small" />} iconPosition="start" sx={{ minHeight: 32, py: 0.5 }} />
+        <Tab label="Visual Builder" value="visual" icon={<ViewModuleIcon fontSize="small" />} iconPosition="start" sx={{ minHeight: 32, py: 0.5 }} />
       </Tabs>
+
+      {/* Visual Builder mode */}
+      {filterMode === 'visual' && (
+        <Box sx={{ mb: 2 }}>
+          <FilterBuilder
+            rows={rows}
+            onApply={handleVisualApply}
+            onClear={handleVisualClear}
+          />
+        </Box>
+      )}
 
       {/* Expression filter mode */}
       {filterMode === 'expression' && (

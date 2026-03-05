@@ -95,8 +95,8 @@
     },
     {
       "path": "src/renderer/components/FilterPanel.tsx",
-      "accessCount": 31,
-      "lastAccessed": 1772720940589,
+      "accessCount": 37,
+      "lastAccessed": 1772721342578,
       "type": "file"
     },
     {
@@ -119,8 +119,8 @@
     },
     {
       "path": "src/renderer/store/appStore.ts",
-      "accessCount": 10,
-      "lastAccessed": 1772721051286,
+      "accessCount": 11,
+      "lastAccessed": 1772721255041,
       "type": "file"
     },
     {
@@ -131,8 +131,8 @@
     },
     {
       "path": "src/renderer/types/index.ts",
-      "accessCount": 9,
-      "lastAccessed": 1772721036437,
+      "accessCount": 10,
+      "lastAccessed": 1772721254658,
       "type": "file"
     },
     {
@@ -232,6 +232,18 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/services/expressionParser.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772721248164,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FilterBuilder.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1772721353635,
+      "type": "file"
+    },
+    {
       "path": "scripts/generate_csv.py",
       "accessCount": 1,
       "lastAccessed": 1772715308250,
@@ -310,12 +322,6 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/services/expressionParser.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772718558989,
-      "type": "file"
-    },
-    {
       "path": "FILTER_GUIDE.md",
       "accessCount": 1,
       "lastAccessed": 1772718675895,
@@ -343,6 +349,18 @@
       "path": "BUILD_GUIDE.md",
       "accessCount": 1,
       "lastAccessed": 1772721210363,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/hooks/useGroupFilter.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772721247783,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/ConditionBlock.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772721278210,
       "type": "file"
     }
   ],
