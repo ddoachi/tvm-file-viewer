@@ -8,13 +8,16 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    title: 'Total Voltage Manager',
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
+      preload: path.join(__dirname, '../preload/index.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
     },
   });
+
+  mainWindow.setMenu(null);
 
   // Load the app
   if (process.env.NODE_ENV === 'development') {

@@ -1,0 +1,218 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1772713828694,
+  "projectRoot": "/home/joohan/dev/bh-support",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.0.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.0.0",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "ELECTRON_DISABLE_SANDBOX=1 electron-vite dev",
+      "build": "electron-vite build",
+      "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
+      "lint": "eslint . --ext .ts,.tsx"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "electron": {
+      "path": "electron",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1772713828687,
+      "keyFiles": []
+    },
+    "out": {
+      "path": "out",
+      "purpose": "Build output",
+      "fileCount": 0,
+      "lastAccessed": 1772713828687,
+      "keyFiles": []
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1772713828692,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/main/index.ts",
+      "accessCount": 9,
+      "lastAccessed": 1772715326285,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/index.html",
+      "accessCount": 5,
+      "lastAccessed": 1772715452419,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 4,
+      "lastAccessed": 1772715317682,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/AppHeader.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1772715318294,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/muiTheme.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772715431526,
+      "type": "file"
+    },
+    {
+      "path": "src/preload/index.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772715289494,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/main.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1772715440922,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/DataGrid.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1772715442516,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/types/index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772715288923,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/hooks/useCsvImport.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772715289383,
+      "type": "file"
+    },
+    {
+      "path": "electron-vite.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772715301663,
+      "type": "file"
+    },
+    {
+      "path": "scripts/generate_csv.py",
+      "accessCount": 1,
+      "lastAccessed": 1772715308250,
+      "type": "file"
+    },
+    {
+      "path": "out/preload/index.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1772715309088,
+      "type": "file"
+    },
+    {
+      "path": "out/main/index.js",
+      "accessCount": 1,
+      "lastAccessed": 1772715309435,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/App.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772715310737,
+      "type": "file"
+    },
+    {
+      "path": "scripts/run.sh",
+      "accessCount": 1,
+      "lastAccessed": 1772715313398,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/designSystem.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772715350841,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/agGridTheme.css",
+      "accessCount": 1,
+      "lastAccessed": 1772715393223,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/README.md",
+      "accessCount": 1,
+      "lastAccessed": 1772715508162,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/examples.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772715557631,
+      "type": "file"
+    },
+    {
+      "path": "DESIGN_SYSTEM.md",
+      "accessCount": 1,
+      "lastAccessed": 1772715636503,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

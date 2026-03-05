@@ -89,7 +89,7 @@ export const DataGrid: React.FC = () => {
     <>
       <FilterPanel gridRef={gridRef} />
       <div
-        className="ag-theme-alpine"
+        className="ag-theme-tvm-light"
         style={{
           height: '100%',
           width: '100%',

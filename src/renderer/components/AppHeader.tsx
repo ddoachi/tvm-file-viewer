@@ -10,7 +10,7 @@ export function AppHeader() {
     <AppBar position="static" elevation={2}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          BH-Support CSV Viewer
+          Total Voltage Manager
         </Typography>
 
         <Button
