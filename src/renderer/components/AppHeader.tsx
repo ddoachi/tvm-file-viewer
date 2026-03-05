@@ -15,7 +15,7 @@ export function AppHeader() {
   };
 
   return (
-    <AppBar position="fixed" elevation={2} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position="static" elevation={2}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Total Voltage Manager

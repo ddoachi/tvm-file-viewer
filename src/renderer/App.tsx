@@ -17,9 +17,11 @@ function App() {
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <AppHeader />
-        <Toolbar /> {/* Spacer for fixed AppBar */}
-        <FileTabs />
+        {/* Fixed top section: AppBar + FileTabs */}
+        <Box sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: 'background.paper' }}>
+          <AppHeader />
+          <FileTabs />
+        </Box>
 
         <Container maxWidth="xl" sx={{ flex: 1, py: 3, display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ flex: 1, minHeight: 0 }}>
