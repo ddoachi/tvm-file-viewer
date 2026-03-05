@@ -1,0 +1,392 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1772713828694,
+  "projectRoot": "/home/joohan/dev/bh-support",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.0.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.0.0",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "ELECTRON_DISABLE_SANDBOX=1 electron-vite dev",
+      "build": "electron-vite build",
+      "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
+      "lint": "eslint . --ext .ts,.tsx"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "electron": {
+      "path": "electron",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1772713828687,
+      "keyFiles": []
+    },
+    "out": {
+      "path": "out",
+      "purpose": "Build output",
+      "fileCount": 0,
+      "lastAccessed": 1772713828687,
+      "keyFiles": []
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1772713828692,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/renderer/components/FilterPanel.tsx",
+      "accessCount": 58,
+      "lastAccessed": 1772725880546,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/DataGrid.tsx",
+      "accessCount": 46,
+      "lastAccessed": 1772721436746,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FilterBuilder.tsx",
+      "accessCount": 30,
+      "lastAccessed": 1772725800973,
+      "type": "file"
+    },
+    {
+      "path": "src/main/index.ts",
+      "accessCount": 21,
+      "lastAccessed": 1772719832683,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/AppHeader.tsx",
+      "accessCount": 17,
+      "lastAccessed": 1772726010696,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/App.tsx",
+      "accessCount": 16,
+      "lastAccessed": 1772726061334,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/ConditionBlock.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1772725502246,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/store/appStore.ts",
+      "accessCount": 12,
+      "lastAccessed": 1772721430332,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/hooks/useCsvImport.ts",
+      "accessCount": 12,
+      "lastAccessed": 1772721450711,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/agGridTheme.css",
+      "accessCount": 12,
+      "lastAccessed": 1772722527135,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 11,
+      "lastAccessed": 1772726182968,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/types/index.ts",
+      "accessCount": 10,
+      "lastAccessed": 1772721254658,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FileTabs.tsx",
+      "accessCount": 10,
+      "lastAccessed": 1772722963914,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/muiTheme.ts",
+      "accessCount": 9,
+      "lastAccessed": 1772721436265,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/main.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772717896152,
+      "type": "file"
+    },
+    {
+      "path": "src/preload/index.ts",
+      "accessCount": 6,
+      "lastAccessed": 1772716758753,
+      "type": "file"
+    },
+    {
+      "path": "tests/electron-api.spec.ts",
+      "accessCount": 6,
+      "lastAccessed": 1772717979161,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/index.html",
+      "accessCount": 5,
+      "lastAccessed": 1772715452419,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/designSystem.ts",
+      "accessCount": 5,
+      "lastAccessed": 1772722267602,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/csvParser.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772716044013,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/treeTransformer.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772716044536,
+      "type": "file"
+    },
+    {
+      "path": "tests/debug-preload.spec.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772718035834,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/StatusBar.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1772721100565,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/expressionParser.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772723151251,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/examples.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1772715899512,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/jsonParser.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772716049416,
+      "type": "file"
+    },
+    {
+      "path": "electron-vite.config.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772716963410,
+      "type": "file"
+    },
+    {
+      "path": "out/main/index.js",
+      "accessCount": 2,
+      "lastAccessed": 1772717597840,
+      "type": "file"
+    },
+    {
+      "path": "tests/services.test.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772721451164,
+      "type": "file"
+    },
+    {
+      "path": ".npmrc",
+      "accessCount": 2,
+      "lastAccessed": 1772721472108,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components",
+      "accessCount": 2,
+      "lastAccessed": 1772722479250,
+      "type": "directory"
+    },
+    {
+      "path": "scripts/generate_csv.py",
+      "accessCount": 1,
+      "lastAccessed": 1772715308250,
+      "type": "file"
+    },
+    {
+      "path": "out/preload/index.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1772715309088,
+      "type": "file"
+    },
+    {
+      "path": "scripts/run.sh",
+      "accessCount": 1,
+      "lastAccessed": 1772715313398,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/README.md",
+      "accessCount": 1,
+      "lastAccessed": 1772715508162,
+      "type": "file"
+    },
+    {
+      "path": "DESIGN_SYSTEM.md",
+      "accessCount": 1,
+      "lastAccessed": 1772715636503,
+      "type": "file"
+    },
+    {
+      "path": "test-data.json",
+      "accessCount": 1,
+      "lastAccessed": 1772715848616,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/groupFilter.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772716050413,
+      "type": "file"
+    },
+    {
+      "path": "src/main",
+      "accessCount": 1,
+      "lastAccessed": 1772716060126,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1772716061233,
+      "type": "directory"
+    },
+    {
+      "path": "playwright.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772717040020,
+      "type": "file"
+    },
+    {
+      "path": "test-results/empty-state.png",
+      "accessCount": 1,
+      "lastAccessed": 1772717994494,
+      "type": "file"
+    },
+    {
+      "path": "out/renderer/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1772718031393,
+      "type": "file"
+    },
+    {
+      "path": "FILTER_GUIDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1772718675895,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/NetCellRenderer.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772720156567,
+      "type": "file"
+    },
+    {
+      "path": "BUILD_GUIDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1772721210363,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/hooks/useGroupFilter.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772721247783,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer",
+      "accessCount": 1,
+      "lastAccessed": 1772722794145,
+      "type": "directory"
+    },
+    {
+      "path": "src/renderer/services/formulaParser.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772723093532,
+      "type": "file"
+    },
+    {
+      "path": "tests/formulaParser.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772723212064,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

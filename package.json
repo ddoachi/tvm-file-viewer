@@ -1,33 +1,48 @@
 {
-  "name": "bh-support",
+  "name": "total-voltage-manager",
   "version": "0.1.0",
+  "description": "Professional voltage netlist viewer for DRAM design engineers",
+  "author": {
+    "name": "BH Support Team",
+    "email": "support@bh.company"
+  },
+  "homepage": "https://github.com/bh-support/total-voltage-manager",
   "type": "module",
-  "main": "dist/main/main.js",
+  "main": "out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "ELECTRON_DISABLE_SANDBOX=1 electron-vite dev",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "test": "npx tsx tests/services.test.ts",
+    "test:e2e": "playwright test",
+    "dist": "npm run build && electron-builder",
+    "dist:linux": "npm run build && electron-builder --linux",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:mac": "npm run build && electron-builder --mac"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "ag-grid-community": "^33.0.0",
-    "ag-grid-react": "^33.0.0",
-    "@mui/material": "^6.4.0",
-    "@mui/icons-material": "^6.4.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.0",
+    "@mui/material": "^6.4.0",
+    "ag-grid-community": "32.3.3",
+    "ag-grid-react": "32.3.3",
     "papaparse": "^5.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
-    "electron": "^33.3.0",
-    "electron-vite": "^3.0.0",
-    "@vitejs/plugin-react": "^4.3.0",
-    "typescript": "^5.7.0",
+    "@playwright/test": "^1.58.2",
+    "@types/papaparse": "^5.3.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/papaparse": "^5.3.0"
+    "@vitejs/plugin-react": "^4.3.0",
+    "electron": "^33.3.0",
+    "electron-builder": "^26.8.1",
+    "electron-vite": "^3.0.0",
+    "playwright": "^1.58.2",
+    "typescript": "^5.7.0"
   }
 }

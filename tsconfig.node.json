@@ -4,5 +4,5 @@
     "composite": true,
     "types": ["node"]
   },
-  "include": ["electron/**/*"]
+  "include": ["src/main/**/*", "src/preload/**/*", "electron-vite.config.ts"]
 }
