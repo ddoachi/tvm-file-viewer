@@ -314,6 +314,12 @@
       "accessCount": 1,
       "lastAccessed": 1772718558989,
       "type": "file"
+    },
+    {
+      "path": "FILTER_GUIDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1772718675895,
+      "type": "file"
     }
   ],
   "userDirectives": []
