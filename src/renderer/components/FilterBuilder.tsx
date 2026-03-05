@@ -38,6 +38,10 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
       map.set(col, new Set());
     });
 
+    if (!rows || rows.length === 0) {
+      return map;
+    }
+
     rows.forEach(row => {
       columns.forEach(col => {
         const value = row[col];
