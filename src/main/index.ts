@@ -27,6 +27,18 @@ function createWindow() {
 
   mainWindow.setMenu(null);
 
+  // Open DevTools in development or with F12
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
+
+  // F12 to toggle DevTools
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F12') {
+      mainWindow?.webContents.toggleDevTools();
+    }
+  });
+
   // Load the app
   if (process.env.NODE_ENV === 'development') {
     const port = process.env.VITE_DEV_SERVER_PORT || '5173';
