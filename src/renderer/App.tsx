@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Container, Box } from '@mui/material';
-import { theme } from './theme/muiTheme';
+import { lightTheme, darkTheme } from './theme/muiTheme';
 import { AppHeader } from './components/AppHeader';
 import { StatusBar } from './components/StatusBar';
 import { DataGrid } from './components/DataGrid';
 import { useAppStore } from './store/appStore';
 
 function App() {
-  const { rows } = useAppStore();
+  const { rows, themeMode } = useAppStore();
+  const currentTheme = useMemo(() => themeMode === 'light' ? lightTheme : darkTheme, [themeMode]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currentTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <AppHeader />

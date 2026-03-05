@@ -188,6 +188,13 @@ export const lightTheme = createTheme({
         },
       },
     },
+    MuiAutocomplete: {
+      styleOverrides: {
+        option: {
+          fontSize: '12px',
+        },
+      },
+    },
   },
 });
 
@@ -291,6 +298,13 @@ export const darkTheme = createTheme({
         root: {
           borderRadius: borderRadius.md,
           fontWeight: typography.fontWeight.medium,
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        option: {
+          fontSize: '12px',
         },
       },
     },

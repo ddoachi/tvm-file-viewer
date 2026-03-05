@@ -8,7 +8,7 @@ import { NetCellRenderer } from './NetCellRenderer';
 import { colors, typography } from '../theme/designSystem';
 
 export const DataGrid: React.FC = () => {
-  const { rows, filterResult, searchText } = useAppStore();
+  const { rows, filterResult, searchText, themeMode } = useAppStore();
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
 
   // Calculate tree depth for indentation
@@ -67,6 +67,7 @@ export const DataGrid: React.FC = () => {
     sortable: true,
     resizable: true,
     flex: 1,
+    filter: true,
   }), []);
 
   // Auto group column definition for tree display
@@ -112,7 +113,7 @@ export const DataGrid: React.FC = () => {
     <>
       <FilterPanel gridRef={gridRef} />
       <div
-        className="ag-theme-tvm-light"
+        className={themeMode === 'light' ? 'ag-theme-tvm-light' : 'ag-theme-tvm-dark'}
         style={{
           height: '100%',
           width: '100%',

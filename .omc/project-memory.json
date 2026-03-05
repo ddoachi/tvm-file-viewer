@@ -89,20 +89,26 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 35,
-      "lastAccessed": 1772720166331,
+      "accessCount": 43,
+      "lastAccessed": 1772720979102,
       "type": "file"
     },
     {
       "path": "src/renderer/components/FilterPanel.tsx",
-      "accessCount": 24,
-      "lastAccessed": 1772719713955,
+      "accessCount": 31,
+      "lastAccessed": 1772720940589,
       "type": "file"
     },
     {
       "path": "src/main/index.ts",
       "accessCount": 21,
       "lastAccessed": 1772719832683,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/AppHeader.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1772720975833,
       "type": "file"
     },
     {
@@ -124,15 +130,27 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/main.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1772717896152,
+      "path": "src/renderer/theme/muiTheme.ts",
+      "accessCount": 8,
+      "lastAccessed": 1772720975715,
       "type": "file"
     },
     {
-      "path": "src/renderer/components/AppHeader.tsx",
+      "path": "src/renderer/store/appStore.ts",
+      "accessCount": 8,
+      "lastAccessed": 1772720976159,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/App.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1772720979173,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/main.tsx",
       "accessCount": 7,
-      "lastAccessed": 1772718163234,
+      "lastAccessed": 1772717896152,
       "type": "file"
     },
     {
@@ -160,27 +178,9 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/App.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1772718127076,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/store/appStore.ts",
-      "accessCount": 4,
-      "lastAccessed": 1772716050939,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/theme/designSystem.ts",
       "accessCount": 4,
       "lastAccessed": 1772718156012,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/theme/muiTheme.ts",
-      "accessCount": 3,
-      "lastAccessed": 1772715431526,
       "type": "file"
     },
     {

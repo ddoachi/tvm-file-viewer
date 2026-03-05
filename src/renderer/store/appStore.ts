@@ -8,11 +8,13 @@ interface AppState {
   isLoading: boolean;
   filterResult: FilterResult | null;
   searchText: string;
+  themeMode: 'light' | 'dark';
   setRows: (rows: CsvRow[], fileName: string) => void;
   setParseErrors: (errors: string[]) => void;
   setLoading: (loading: boolean) => void;
   setFilterResult: (result: FilterResult | null) => void;
   setSearchText: (text: string) => void;
+  setThemeMode: (mode: 'light' | 'dark') => void;
   reset: () => void;
 }
 
@@ -23,6 +25,7 @@ export const useAppStore = create<AppState>((set) => ({
   isLoading: false,
   filterResult: null,
   searchText: '',
+  themeMode: 'light',
 
   setRows: (rows, fileName) => set({ rows, fileName, parseErrors: [] }),
 
@@ -34,5 +37,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   setSearchText: (text) => set({ searchText: text }),
 
-  reset: () => set({ rows: [], fileName: null, parseErrors: [], isLoading: false, filterResult: null, searchText: '' }),
+  setThemeMode: (mode) => set({ themeMode: mode }),
+
+  reset: () => set({ rows: [], fileName: null, parseErrors: [], isLoading: false, filterResult: null, searchText: '', themeMode: 'light' }),
 }));

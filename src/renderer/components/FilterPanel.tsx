@@ -128,9 +128,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
       </Box>
 
       {/* Filter mode tabs */}
-      <Tabs value={filterMode} onChange={handleModeChange} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}>
-        <Tab label="Simple" value="simple" />
-        <Tab label="Expression" value="expression" icon={<CodeIcon fontSize="small" />} iconPosition="start" />
+      <Tabs value={filterMode} onChange={handleModeChange} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider', minHeight: 32 }}>
+        <Tab label="Simple" value="simple" sx={{ minHeight: 32, py: 0.5 }} />
+        <Tab label="Expression" value="expression" icon={<CodeIcon fontSize="small" />} iconPosition="start" sx={{ minHeight: 32, py: 0.5 }} />
       </Tabs>
 
       {/* Expression filter mode */}
@@ -142,6 +142,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             placeholder="e.g., Vnet1==VDD && Vnet2==VEXT"
             value={expressionText}
             onChange={handleExpressionChange}
+            onKeyDown={(e) => e.key === 'Enter' && handleApplyExpression()}
             error={!!expressionError}
             helperText={expressionError || "Operators: == (equals), != (not equals), ~= (contains), ^= (starts with), $= (ends with). Combine with && (AND) or || (OR)"}
             InputProps={{
@@ -159,6 +160,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
               size="small"
               onClick={handleApplyExpression}
               disabled={!expressionText.trim()}
+              sx={{ height: 28 }}
             >
               Apply Expression
             </Button>
@@ -167,6 +169,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
               color="secondary"
               size="small"
               onClick={handleClearExpression}
+              sx={{ height: 28 }}
             >
               Clear
             </Button>
