@@ -66,6 +66,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
       <Box sx={{ mb: 2 }}>
         <TextField
           fullWidth
+          size="small"
           placeholder="Search across all columns..."
           value={searchText}
           onChange={handleSearchChange}
@@ -81,7 +82,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
 
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         {/* Column selector */}
-        <FormControl sx={{ minWidth: 150 }}>
+        <FormControl sx={{ minWidth: 150 }} size="small">
           <InputLabel id="filter-column-label">Column</InputLabel>
           <Select
             labelId="filter-column-label"
@@ -98,7 +99,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
         </FormControl>
 
         {/* Operator selector */}
-        <FormControl sx={{ minWidth: 180 }}>
+        <FormControl sx={{ minWidth: 180 }} size="small">
           <InputLabel id="filter-operator-label">Operator</InputLabel>
           <Select
             labelId="filter-operator-label"
@@ -123,6 +124,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           id="filter-value"
           label="Value"
           variant="outlined"
+          size="small"
           value={value}
           onChange={handleValueChange}
           disabled={isValueDisabled}
@@ -134,6 +136,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           <Button
             variant="contained"
             color="primary"
+            size="small"
             onClick={applyFilter}
           >
             Apply Filter
@@ -142,6 +145,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           <Button
             variant="outlined"
             color="secondary"
+            size="small"
             onClick={clearFilter}
             disabled={activeConditions.length === 0}
           >
@@ -157,6 +161,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             label={`${matchedGroupCount} group${matchedGroupCount !== 1 ? 's' : ''} matched`}
             color="primary"
             variant="outlined"
+            size="small"
           />
         </Box>
       )}

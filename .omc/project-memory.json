@@ -100,6 +100,12 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/components/FilterPanel.tsx",
+      "accessCount": 13,
+      "lastAccessed": 1772718181325,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/types/index.ts",
       "accessCount": 8,
       "lastAccessed": 1772716759114,
@@ -118,15 +124,15 @@
       "type": "file"
     },
     {
-      "path": "src/preload/index.ts",
-      "accessCount": 6,
-      "lastAccessed": 1772716758753,
+      "path": "src/renderer/components/AppHeader.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772718163234,
       "type": "file"
     },
     {
-      "path": "src/renderer/components/FilterPanel.tsx",
+      "path": "src/preload/index.ts",
       "accessCount": 6,
-      "lastAccessed": 1772716777896,
+      "lastAccessed": 1772716758753,
       "type": "file"
     },
     {
@@ -154,12 +160,6 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/components/AppHeader.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1772715781768,
-      "type": "file"
-    },
-    {
       "path": "src/renderer/App.tsx",
       "accessCount": 5,
       "lastAccessed": 1772718127076,
@@ -169,6 +169,12 @@
       "path": "src/renderer/store/appStore.ts",
       "accessCount": 4,
       "lastAccessed": 1772716050939,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/designSystem.ts",
+      "accessCount": 4,
+      "lastAccessed": 1772718156012,
       "type": "file"
     },
     {
@@ -187,12 +193,6 @@
       "path": "src/renderer/services/treeTransformer.ts",
       "accessCount": 3,
       "lastAccessed": 1772716044536,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/theme/designSystem.ts",
-      "accessCount": 3,
-      "lastAccessed": 1772716046066,
       "type": "file"
     },
     {
@@ -301,6 +301,12 @@
       "path": "out/renderer/index.html",
       "accessCount": 1,
       "lastAccessed": 1772718031393,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/StatusBar.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772718155738,
       "type": "file"
     }
   ],

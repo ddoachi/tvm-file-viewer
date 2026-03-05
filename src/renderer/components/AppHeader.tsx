@@ -16,6 +16,7 @@ export function AppHeader() {
         <Button
           variant="contained"
           color="secondary"
+          size="small"
           startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <FileUploadIcon />}
           onClick={importCsv}
           disabled={isLoading}
