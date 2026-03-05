@@ -47,8 +47,12 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
 }) => {
   // Get unique values for selected column
   const valueOptions = useMemo(() => {
-    if (!condition.column) return [];
+    if (!condition.column) {
+      console.log('ConditionBlock: No column selected');
+      return [];
+    }
     const values = columnValues.get(condition.column);
+    console.log(`ConditionBlock: Column=${condition.column}, Values=`, values ? Array.from(values) : 'undefined');
     return values ? Array.from(values).sort() : [];
   }, [condition.column, columnValues]);
 
