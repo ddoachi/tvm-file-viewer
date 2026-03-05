@@ -72,20 +72,25 @@ export const FileTabs: React.FC = () => {
             label={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <span>{file.fileName}</span>
-                <IconButton
-                  size="small"
-                  onClick={(e) => handleCloseTab(file.id, file.fileName, e)}
+                <Box
+                  component="span"
+                  onClick={(e: React.MouseEvent) => handleCloseTab(file.id, file.fileName, e)}
                   sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     p: 0,
                     width: 16,
                     height: 16,
+                    borderRadius: '4px',
+                    cursor: 'pointer',
                     '&:hover': {
                       bgcolor: themeMode === 'light' ? '#e0e0e0' : '#424242',
                     },
                   }}
                 >
                   <CloseIcon sx={{ fontSize: 16 }} />
-                </IconButton>
+                </Box>
               </Box>
             }
           />

@@ -142,6 +142,12 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/components/FileTabs.tsx",
+      "accessCount": 10,
+      "lastAccessed": 1772722963914,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/theme/muiTheme.ts",
       "accessCount": 9,
       "lastAccessed": 1772721436265,
@@ -151,12 +157,6 @@
       "path": "package.json",
       "accessCount": 9,
       "lastAccessed": 1772721444574,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/components/FileTabs.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1772722831332,
       "type": "file"
     },
     {
