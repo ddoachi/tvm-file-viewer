@@ -18,6 +18,17 @@ export interface CsvRow {
   _rowIndex: number;
 }
 
+export interface ParseResult {
+  rows: CsvRow[];
+  errors: ParseError[];
+  rowCount: number;
+}
+
+export interface ParseError {
+  row: number;
+  message: string;
+}
+
 export type FilterOperator =
   | 'equals'
   | 'notEquals'
