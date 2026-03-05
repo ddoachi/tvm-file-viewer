@@ -89,14 +89,14 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 18,
-      "lastAccessed": 1772716044980,
+      "accessCount": 30,
+      "lastAccessed": 1772718056349,
       "type": "file"
     },
     {
       "path": "src/main/index.ts",
-      "accessCount": 15,
-      "lastAccessed": 1772716758199,
+      "accessCount": 18,
+      "lastAccessed": 1772717613810,
       "type": "file"
     },
     {
@@ -109,6 +109,12 @@
       "path": "src/renderer/theme/agGridTheme.css",
       "accessCount": 8,
       "lastAccessed": 1772716811634,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/main.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1772717896152,
       "type": "file"
     },
     {
@@ -136,6 +142,12 @@
       "type": "file"
     },
     {
+      "path": "tests/electron-api.spec.ts",
+      "accessCount": 6,
+      "lastAccessed": 1772717979161,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/index.html",
       "accessCount": 5,
       "lastAccessed": 1772715452419,
@@ -149,8 +161,8 @@
     },
     {
       "path": "src/renderer/App.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1772715940253,
+      "accessCount": 5,
+      "lastAccessed": 1772718127076,
       "type": "file"
     },
     {
@@ -184,9 +196,9 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/main.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1772715440922,
+      "path": "tests/debug-preload.spec.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772718035834,
       "type": "file"
     },
     {
@@ -208,6 +220,12 @@
       "type": "file"
     },
     {
+      "path": "out/main/index.js",
+      "accessCount": 2,
+      "lastAccessed": 1772717597840,
+      "type": "file"
+    },
+    {
       "path": "scripts/generate_csv.py",
       "accessCount": 1,
       "lastAccessed": 1772715308250,
@@ -217,12 +235,6 @@
       "path": "out/preload/index.mjs",
       "accessCount": 1,
       "lastAccessed": 1772715309088,
-      "type": "file"
-    },
-    {
-      "path": "out/main/index.js",
-      "accessCount": 1,
-      "lastAccessed": 1772715309435,
       "type": "file"
     },
     {
@@ -268,12 +280,6 @@
       "type": "directory"
     },
     {
-      "path": "tests/electron-api.spec.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772717037819,
-      "type": "file"
-    },
-    {
       "path": "playwright.config.ts",
       "accessCount": 1,
       "lastAccessed": 1772717040020,
@@ -283,6 +289,18 @@
       "path": "tests/services.test.ts",
       "accessCount": 1,
       "lastAccessed": 1772717088849,
+      "type": "file"
+    },
+    {
+      "path": "test-results/empty-state.png",
+      "accessCount": 1,
+      "lastAccessed": 1772717994494,
+      "type": "file"
+    },
+    {
+      "path": "out/renderer/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1772718031393,
       "type": "file"
     }
   ],

@@ -1,19 +1,27 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
+  const preloadPath = path.join(__dirname, '../preload/index.mjs');
+  console.log('Preload path:', preloadPath);
+  console.log('Preload exists:', fs.existsSync(preloadPath));
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     title: 'Total Voltage Manager',
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.mjs'),
+      preload: preloadPath,
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true,
+      sandbox: false, // Disabled for Linux compatibility with preload scripts
     },
   });
 

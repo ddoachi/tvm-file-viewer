@@ -1,27 +1,45 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { ColDef, IRowNode } from 'ag-grid-community';
+import type { ColDef, IRowNode, ICellRendererParams, RowClickedEvent } from 'ag-grid-community';
 import { useAppStore } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
 import { colors, typography } from '../theme/designSystem';
 
-// Register AG Grid modules
-const modules = [ClientSideRowModelModule];
-
 export const DataGrid: React.FC = () => {
   const { rows, filterResult, searchText } = useAppStore();
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
 
-  // Column definitions
+  // Calculate tree depth for indentation
+  const getTreeDepth = useCallback((row: CsvRow): number => {
+    let depth = 0;
+    let current = row;
+    const rowMap = new Map(rows.map(r => [r.id, r]));
+
+    while (current.parentId) {
+      depth++;
+      const parent = rowMap.get(current.parentId);
+      if (!parent) break;
+      current = parent;
+    }
+    return depth;
+  }, [rows]);
+
+  // Column definitions with Net column showing tree hierarchy
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
     {
       field: 'Net',
       headerName: 'Net',
-      flex: 1,
+      flex: 2,
       sortable: true,
       resizable: true,
+      cellRenderer: (params: ICellRendererParams<CsvRow>) => {
+        if (!params.data) return '';
+        const depth = getTreeDepth(params.data);
+        const indent = depth * 24;
+        const connector = depth > 0 ? '<span style="color: #2D7FF9; margin-right: 8px;">└─</span>' : '';
+        return `<div style="padding-left: ${indent}px; font-family: 'JetBrains Mono', monospace;">${connector}${params.value}</div>`;
+      },
     },
     {
       field: 'Group',
@@ -85,9 +103,16 @@ export const DataGrid: React.FC = () => {
     [filterResult]
   );
 
+  // Row click handler for crossprobing
+  const handleRowClick = useCallback((event: RowClickedEvent<CsvRow>) => {
+    if (event.data && window.electronAPI) {
+      window.electronAPI.onRowClick(event.data);
+    }
+  }, []);
+
   return (
     <>
-      {rows.length > 0 && <FilterPanel gridRef={gridRef} />}
+      <FilterPanel gridRef={gridRef} />
       <div
         className="ag-theme-tvm-light"
         style={{
@@ -97,31 +122,14 @@ export const DataGrid: React.FC = () => {
       >
         <AgGridReact<CsvRow>
           ref={gridRef}
-          modules={modules}
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
-          treeData={true}
-          dataTypeDefinitions={dataTypeDefinitions}
-          getDataPath={(data: CsvRow) => {
-            // Build path by traversing up the parentId chain
-            const path: string[] = [];
-            let current: CsvRow | undefined = data;
-            const rowMap = new Map(rows.map(r => [r.id, r]));
-
-            while (current) {
-              path.unshift(current.Net);
-              current = current.parentId ? rowMap.get(current.parentId) : undefined;
-            }
-
-            return path;
-          }}
-          autoGroupColumnDef={autoGroupColumnDef}
           animateRows={true}
-          groupDefaultExpanded={0}
           quickFilterText={searchText}
           isExternalFilterPresent={isExternalFilterPresent}
           doesExternalFilterPass={doesExternalFilterPass}
+          onRowClicked={handleRowClick}
           overlayNoRowsTemplate={
             '<div style="padding: 40px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: ' + colors.light.text.secondary + ';">' +
             '<p style="font-family: ' + typography.fontFamily.sans + '; font-size: ' + typography.fontSize.base + '; font-weight: ' + typography.fontWeight.medium + '; margin: 0; color: ' + colors.light.text.primary + ';">No data loaded</p>' +

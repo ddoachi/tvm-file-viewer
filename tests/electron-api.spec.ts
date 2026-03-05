@@ -1,11 +1,20 @@
 import { test, expect, _electron as electron } from '@playwright/test';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 test.describe('Electron API Integration', () => {
   test('window.electronAPI should be available in renderer', async () => {
     // Launch Electron app
     const app = await electron.launch({
       args: [path.join(__dirname, '../out/main/index.js')],
+      env: {
+        ...process.env,
+        NODE_ENV: 'production',
+        ELECTRON_DISABLE_SANDBOX: '1',
+      },
     });
 
     // Get the first window
@@ -49,10 +58,19 @@ test.describe('Electron API Integration', () => {
   test('AG Grid should render with empty state', async () => {
     const app = await electron.launch({
       args: [path.join(__dirname, '../out/main/index.js')],
+      env: {
+        ...process.env,
+        NODE_ENV: 'production',
+        ELECTRON_DISABLE_SANDBOX: '1',
+      },
     });
 
     const window = await app.firstWindow();
     await window.waitForLoadState('domcontentloaded');
+    await window.waitForTimeout(2000); // Wait for React to render
+
+    // Debug: Take screenshot
+    await window.screenshot({ path: 'test-results/empty-state.png' });
 
     // Check if AG Grid is rendered
     const hasAgGrid = await window.locator('.ag-theme-tvm-light').count();
@@ -68,6 +86,11 @@ test.describe('Electron API Integration', () => {
   test('Custom filter panel should be present', async () => {
     const app = await electron.launch({
       args: [path.join(__dirname, '../out/main/index.js')],
+      env: {
+        ...process.env,
+        NODE_ENV: 'production',
+        ELECTRON_DISABLE_SANDBOX: '1',
+      },
     });
 
     const window = await app.firstWindow();
