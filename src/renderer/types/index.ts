@@ -35,7 +35,9 @@ export type FilterOperator =
   | 'contains'
   | 'notContains'
   | 'startsWith'
-  | 'endsWith';
+  | 'endsWith'
+  | 'isEmpty'
+  | 'isNotEmpty';
 
 export interface FilterCondition {
   field: keyof Omit<CsvRow, '_treePath' | '_rowIndex'>;
@@ -44,7 +46,7 @@ export interface FilterCondition {
 }
 
 export interface FilterResult {
-  rows: CsvRow[];
-  totalCount: number;
-  filteredCount: number;
+  directMatches: Set<number>;
+  matchedGroups: Set<string>;
+  visibleRowIndices: Set<number>;
 }
