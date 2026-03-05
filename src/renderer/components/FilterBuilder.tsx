@@ -25,7 +25,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   onClear,
 }) => {
   const [conditions, setConditions] = useState<Condition[]>([
-    { id: uuidv4(), column: '', operator: '==', value: '' },
+    { id: generateId(), column: '', operator: '==', value: '' },
   ]);
   const [connectors, setConnectors] = useState<Array<'AND' | 'OR'>>([]);
 
@@ -53,7 +53,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   const handleAddCondition = useCallback(() => {
     setConditions(prev => [
       ...prev,
-      { id: uuidv4(), column: '', operator: '==', value: '' },
+      { id: generateId(), column: '', operator: '==', value: '' },
     ]);
     setConnectors(prev => [...prev, 'AND']);
   }, []);
@@ -110,7 +110,7 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   }, [conditions, connectors, onApply]);
 
   const handleClear = useCallback(() => {
-    setConditions([{ id: uuidv4(), column: '', operator: '==', value: '' }]);
+    setConditions([{ id: generateId(), column: '', operator: '==', value: '' }]);
     setConnectors([]);
     onClear();
   }, [onClear]);
