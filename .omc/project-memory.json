@@ -89,8 +89,8 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/FilterPanel.tsx",
-      "accessCount": 52,
-      "lastAccessed": 1772723370414,
+      "accessCount": 53,
+      "lastAccessed": 1772725582533,
       "type": "file"
     },
     {
@@ -101,8 +101,8 @@
     },
     {
       "path": "src/renderer/components/FilterBuilder.tsx",
-      "accessCount": 25,
-      "lastAccessed": 1772725498748,
+      "accessCount": 27,
+      "lastAccessed": 1772725588200,
       "type": "file"
     },
     {

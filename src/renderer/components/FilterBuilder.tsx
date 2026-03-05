@@ -44,8 +44,11 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
     });
 
     if (!rows || rows.length === 0) {
+      console.log('FilterBuilder: No rows data');
       return map;
     }
+
+    console.log(`FilterBuilder: Processing ${rows.length} rows`);
 
     rows.forEach(row => {
       columns.forEach(col => {
@@ -55,6 +58,8 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
         }
       });
     });
+
+    console.log('FilterBuilder: columnValues populated:', Array.from(map.entries()).map(([k, v]) => `${k}=${v.size}`));
 
     return map;
   }, [rows]);
