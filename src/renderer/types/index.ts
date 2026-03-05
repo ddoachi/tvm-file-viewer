@@ -1,6 +1,7 @@
 export interface ElectronAPI {
   openFileDialog(): Promise<string | null>;
   readFile(filePath: string): Promise<string>;
+  onRowClick(rowData: any): Promise<void>;
 }
 
 declare global {
@@ -10,11 +11,12 @@ declare global {
 }
 
 export interface CsvRow {
+  id: string;
+  parentId: string | null;
   Net: string;
   Group: string;
   Vnet1: string;
   Vnet2: string;
-  _treePath: number[];
   _rowIndex: number;
 }
 
@@ -40,7 +42,7 @@ export type FilterOperator =
   | 'isNotEmpty';
 
 export interface FilterCondition {
-  field: keyof Omit<CsvRow, '_treePath' | '_rowIndex'>;
+  field: keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>;
   operator: FilterOperator;
   value: string;
 }

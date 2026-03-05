@@ -5,12 +5,13 @@ import type { ColDef, IRowNode } from 'ag-grid-community';
 import { useAppStore } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
+import { colors, typography } from '../theme/designSystem';
 
 // Register AG Grid modules
 const modules = [ClientSideRowModelModule];
 
 export const DataGrid: React.FC = () => {
-  const { rows, filterResult } = useAppStore();
+  const { rows, filterResult, searchText } = useAppStore();
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
 
   // Column definitions
@@ -61,10 +62,13 @@ export const DataGrid: React.FC = () => {
     },
   }), []);
 
-  // Get data path for tree structure
-  const getDataPath = (data: CsvRow) => {
-    return data._treePath;
-  };
+  // Data type definitions for tree structure
+  const dataTypeDefinitions = useMemo(() => ({
+    object: {
+      baseDataType: 'object' as const,
+      extendsDataType: 'object' as const,
+    },
+  }), []);
 
   // External filter callbacks
   const isExternalFilterPresent = useCallback(() => {
@@ -81,13 +85,9 @@ export const DataGrid: React.FC = () => {
     [filterResult]
   );
 
-  if (rows.length === 0) {
-    return null;
-  }
-
   return (
     <>
-      <FilterPanel gridRef={gridRef} />
+      {rows.length > 0 && <FilterPanel gridRef={gridRef} />}
       <div
         className="ag-theme-tvm-light"
         style={{
@@ -102,12 +102,32 @@ export const DataGrid: React.FC = () => {
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           treeData={true}
-          getDataPath={getDataPath}
+          dataTypeDefinitions={dataTypeDefinitions}
+          getDataPath={(data: CsvRow) => {
+            // Build path by traversing up the parentId chain
+            const path: string[] = [];
+            let current: CsvRow | undefined = data;
+            const rowMap = new Map(rows.map(r => [r.id, r]));
+
+            while (current) {
+              path.unshift(current.Net);
+              current = current.parentId ? rowMap.get(current.parentId) : undefined;
+            }
+
+            return path;
+          }}
           autoGroupColumnDef={autoGroupColumnDef}
           animateRows={true}
           groupDefaultExpanded={0}
+          quickFilterText={searchText}
           isExternalFilterPresent={isExternalFilterPresent}
           doesExternalFilterPass={doesExternalFilterPass}
+          overlayNoRowsTemplate={
+            '<div style="padding: 40px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: ' + colors.light.text.secondary + ';">' +
+            '<p style="font-family: ' + typography.fontFamily.sans + '; font-size: ' + typography.fontSize.base + '; font-weight: ' + typography.fontWeight.medium + '; margin: 0; color: ' + colors.light.text.primary + ';">No data loaded</p>' +
+            '<p style="font-family: ' + typography.fontFamily.sans + '; font-size: ' + typography.fontSize.sm + '; margin-top: 8px; color: ' + colors.light.text.secondary + ';">Click "Import" to load a CSV or JSON file</p>' +
+            '</div>'
+          }
         />
       </div>
     </>

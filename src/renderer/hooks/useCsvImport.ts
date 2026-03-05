@@ -1,5 +1,6 @@
 import { useAppStore } from '../store/appStore';
 import { parseCsv } from '../services/csvParser';
+import { parseJson } from '../services/jsonParser';
 import { computeTreePaths } from '../services/treeTransformer';
 
 export function useCsvImport() {
@@ -21,8 +22,17 @@ export function useCsvImport() {
       // Read file content
       const content = await window.electronAPI.readFile(filePath);
 
-      // Parse CSV
-      const parseResult = parseCsv(content);
+      // Determine file type from extension
+      const fileExtension = filePath.split('.').pop()?.toLowerCase();
+
+      // Parse based on file type
+      let parseResult;
+      if (fileExtension === 'json') {
+        parseResult = parseJson(content);
+      } else {
+        // Default to CSV parsing
+        parseResult = parseCsv(content);
+      }
 
       // Check for parse errors
       if (parseResult.errors.length > 0) {
@@ -32,14 +42,16 @@ export function useCsvImport() {
         setParseErrors(errorMessages);
       }
 
-      // Transform with tree paths
-      const rowsWithPaths = computeTreePaths(parseResult.rows);
+      // Transform with parent-child relationships (only needed for CSV)
+      const rowsWithRelations = fileExtension === 'csv'
+        ? computeTreePaths(parseResult.rows)
+        : parseResult.rows;
 
       // Extract filename from path
-      const fileName = filePath.split(/[\\/]/).pop() || 'unknown.csv';
+      const fileName = filePath.split(/[\\/]/).pop() || 'unknown';
 
       // Update store
-      setRows(rowsWithPaths, fileName);
+      setRows(rowsWithRelations, fileName);
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';

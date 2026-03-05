@@ -29,13 +29,14 @@ export function parseCsv(csvText: string): ParseResult {
     throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
   }
 
-  // Convert to CsvRow format with _rowIndex
+  // Convert to CsvRow format with id, parentId, and _rowIndex
   const rows: CsvRow[] = parseResult.data.map((row, index) => ({
+    id: `row-${index}`,
+    parentId: null, // Will be set by treeTransformer
     Net: row.Net || '',
     Group: row.Group || '',
     Vnet1: row.Vnet1 || '',
     Vnet2: row.Vnet2 || '',
-    _treePath: [],
     _rowIndex: index,
   }));
 

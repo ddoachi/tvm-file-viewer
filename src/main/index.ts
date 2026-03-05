@@ -55,6 +55,7 @@ ipcMain.handle('dialog:openFile', async () => {
       properties: ['openFile'],
       filters: [
         { name: 'CSV Files', extensions: ['csv'] },
+        { name: 'JSON Files', extensions: ['json'] },
         { name: 'All Files', extensions: ['*'] },
       ],
     });
@@ -78,4 +79,8 @@ ipcMain.handle('file:read', async (_event, filePath: string) => {
     console.error('Error reading file:', error);
     throw new Error(`Failed to read file: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+});
+
+ipcMain.handle('row:clicked', (_event, rowData: unknown) => {
+  console.log('Row clicked:', rowData);
 });

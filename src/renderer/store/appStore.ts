@@ -7,10 +7,12 @@ interface AppState {
   parseErrors: string[];
   isLoading: boolean;
   filterResult: FilterResult | null;
+  searchText: string;
   setRows: (rows: CsvRow[], fileName: string) => void;
   setParseErrors: (errors: string[]) => void;
   setLoading: (loading: boolean) => void;
   setFilterResult: (result: FilterResult | null) => void;
+  setSearchText: (text: string) => void;
   reset: () => void;
 }
 
@@ -20,6 +22,7 @@ export const useAppStore = create<AppState>((set) => ({
   parseErrors: [],
   isLoading: false,
   filterResult: null,
+  searchText: '',
 
   setRows: (rows, fileName) => set({ rows, fileName, parseErrors: [] }),
 
@@ -29,5 +32,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   setFilterResult: (result) => set({ filterResult: result }),
 
-  reset: () => set({ rows: [], fileName: null, parseErrors: [], isLoading: false, filterResult: null }),
+  setSearchText: (text) => set({ searchText: text }),
+
+  reset: () => set({ rows: [], fileName: null, parseErrors: [], isLoading: false, filterResult: null, searchText: '' }),
 }));

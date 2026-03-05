@@ -10,17 +10,21 @@ import {
   Button,
   Chip,
   Typography,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import type { SelectChangeEvent } from '@mui/material';
 import type { AgGridReact } from 'ag-grid-react';
 import type { CsvRow, FilterOperator } from '../types';
 import { useGroupFilter } from '../hooks/useGroupFilter';
+import { useAppStore } from '../store/appStore';
 
 interface FilterPanelProps {
   gridRef: React.RefObject<AgGridReact<CsvRow>>;
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
+  const { searchText, setSearchText } = useAppStore();
   const {
     column,
     setColumn,
@@ -46,6 +50,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
     setValue(event.target.value);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(event.target.value);
+  };
+
   const isValueDisabled = operator === 'isEmpty' || operator === 'isNotEmpty';
 
   return (
@@ -53,6 +61,23 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
       <Typography variant="h6" gutterBottom>
         Filter
       </Typography>
+
+      {/* Global search input */}
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          fullWidth
+          placeholder="Search across all columns..."
+          value={searchText}
+          onChange={handleSearchChange}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
 
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         {/* Column selector */}

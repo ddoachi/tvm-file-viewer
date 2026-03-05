@@ -7,4 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readFile: (filePath: string): Promise<string> => {
     return ipcRenderer.invoke('file:read', filePath);
   },
+  onRowClick: (rowData: any): Promise<void> => {
+    return ipcRenderer.invoke('row:clicked', rowData);
+  },
 });

@@ -19,7 +19,7 @@ function App() {
 
         <Container maxWidth="xl" sx={{ flex: 1, py: 3, display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ flex: 1, minHeight: 0 }}>
-            {rows.length > 0 && <DataGrid />}
+            <DataGrid />
           </Box>
 
           <StatusBar />

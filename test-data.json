@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "parentId": null,
+    "Net": "_DRAM_CORE",
+    "Group": "1",
+    "Vnet1": "1.2",
+    "Vnet2": "1.2"
+  },
+  {
+    "id": "2",
+    "parentId": "1",
+    "Net": "_DRAM_CORE.BANK0",
+    "Group": "1",
+    "Vnet1": "1.2",
+    "Vnet2": "1.2"
+  },
+  {
+    "id": "3",
+    "parentId": "2",
+    "Net": "_DRAM_CORE.BANK0.net1",
+    "Group": "1",
+    "Vnet1": "1.19",
+    "Vnet2": "1.21"
+  },
+  {
+    "id": "4",
+    "parentId": "2",
+    "Net": "_DRAM_CORE.BANK0.net2",
+    "Group": "1",
+    "Vnet1": "1.18",
+    "Vnet2": "1.22"
+  },
+  {
+    "id": "5",
+    "parentId": "1",
+    "Net": "_DRAM_CORE.BANK1",
+    "Group": "2",
+    "Vnet1": "1.2",
+    "Vnet2": "1.2"
+  },
+  {
+    "id": "6",
+    "parentId": "5",
+    "Net": "_DRAM_CORE.BANK1.net3",
+    "Group": "2",
+    "Vnet1": "1.17",
+    "Vnet2": "1.23"
+  }
+]

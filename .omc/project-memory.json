@@ -88,9 +88,21 @@
   },
   "hotPaths": [
     {
+      "path": "src/renderer/components/DataGrid.tsx",
+      "accessCount": 17,
+      "lastAccessed": 1772715954265,
+      "type": "file"
+    },
+    {
       "path": "src/main/index.ts",
-      "accessCount": 9,
-      "lastAccessed": 1772715326285,
+      "accessCount": 13,
+      "lastAccessed": 1772715916482,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/types/index.ts",
+      "accessCount": 6,
+      "lastAccessed": 1772715921232,
       "type": "file"
     },
     {
@@ -100,15 +112,33 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/components/AppHeader.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1772715781768,
+      "type": "file"
+    },
+    {
       "path": "package.json",
       "accessCount": 4,
       "lastAccessed": 1772715317682,
       "type": "file"
     },
     {
-      "path": "src/renderer/components/AppHeader.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1772715318294,
+      "path": "src/preload/index.ts",
+      "accessCount": 4,
+      "lastAccessed": 1772715919355,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FilterPanel.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1772715932933,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/App.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1772715940253,
       "type": "file"
     },
     {
@@ -118,9 +148,15 @@
       "type": "file"
     },
     {
-      "path": "src/preload/index.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772715289494,
+      "path": "src/renderer/hooks/useCsvImport.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772715810364,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/store/appStore.ts",
+      "accessCount": 3,
+      "lastAccessed": 1772715913044,
       "type": "file"
     },
     {
@@ -130,21 +166,27 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/components/DataGrid.tsx",
+      "path": "src/renderer/services/csvParser.ts",
       "accessCount": 2,
-      "lastAccessed": 1772715442516,
+      "lastAccessed": 1772715752704,
       "type": "file"
     },
     {
-      "path": "src/renderer/types/index.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772715288923,
+      "path": "src/renderer/services/treeTransformer.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772715761639,
       "type": "file"
     },
     {
-      "path": "src/renderer/hooks/useCsvImport.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772715289383,
+      "path": "src/renderer/theme/examples.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1772715899512,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/theme/designSystem.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772715901920,
       "type": "file"
     },
     {
@@ -172,21 +214,9 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/App.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772715310737,
-      "type": "file"
-    },
-    {
       "path": "scripts/run.sh",
       "accessCount": 1,
       "lastAccessed": 1772715313398,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/theme/designSystem.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772715350841,
       "type": "file"
     },
     {
@@ -202,15 +232,21 @@
       "type": "file"
     },
     {
-      "path": "src/renderer/theme/examples.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772715557631,
-      "type": "file"
-    },
-    {
       "path": "DESIGN_SYSTEM.md",
       "accessCount": 1,
       "lastAccessed": 1772715636503,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/services/jsonParser.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772715768927,
+      "type": "file"
+    },
+    {
+      "path": "test-data.json",
+      "accessCount": 1,
+      "lastAccessed": 1772715848616,
       "type": "file"
     }
   ],

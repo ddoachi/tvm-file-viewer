@@ -21,7 +21,7 @@ export function AppHeader() {
           disabled={isLoading}
           sx={{ minWidth: 160 }}
         >
-          {isLoading ? 'Importing...' : 'Import CSV'}
+          {isLoading ? 'Importing...' : 'Import'}
         </Button>
       </Toolbar>
     </AppBar>
