@@ -358,7 +358,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           value={value}
           onChange={handleValueChange}
           disabled={isValueDisabled}
-          sx={{ minWidth: 200 }}
+          sx={{ minWidth: 200, '& .MuiOutlinedInput-root': { height: '32px' } }}
           inputProps={{ style: { fontSize: '12px' } }}
           InputLabelProps={{ style: { fontSize: '12px' } }}
         />
@@ -370,6 +370,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             color="primary"
             size="small"
             onClick={applyFilter}
+            sx={{ height: '32px' }}
           >
             Apply Filter
           </Button>
@@ -380,6 +381,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
             size="small"
             onClick={clearFilter}
             disabled={activeConditions.length === 0}
+            sx={{ height: '32px' }}
           >
             Clear Filter
           </Button>
