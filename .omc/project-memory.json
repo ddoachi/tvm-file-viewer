@@ -95,8 +95,8 @@
     },
     {
       "path": "src/renderer/components/FilterPanel.tsx",
-      "accessCount": 37,
-      "lastAccessed": 1772721342578,
+      "accessCount": 41,
+      "lastAccessed": 1772722272743,
       "type": "file"
     },
     {
@@ -185,8 +185,14 @@
     },
     {
       "path": "src/renderer/theme/designSystem.ts",
-      "accessCount": 4,
-      "lastAccessed": 1772718156012,
+      "accessCount": 5,
+      "lastAccessed": 1772722267602,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/FileTabs.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1772722270516,
       "type": "file"
     },
     {
@@ -241,12 +247,6 @@
       "path": "src/renderer/services/expressionParser.ts",
       "accessCount": 2,
       "lastAccessed": 1772721248164,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/components/FileTabs.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1772721430817,
       "type": "file"
     },
     {

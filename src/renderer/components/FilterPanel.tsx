@@ -140,6 +140,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
           size="small"
           placeholder="Search across all columns..."
           value={searchText}
+          inputProps={{ style: { fontSize: '12px' } }}
+          InputLabelProps={{ style: { fontSize: '12px' } }}
           onChange={handleSearchChange}
           InputProps={{
             startAdornment: (
@@ -218,7 +220,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         {/* Column selector */}
         <FormControl sx={{ minWidth: 150 }} size="small">
-          <InputLabel id="filter-column-label">Column</InputLabel>
+          <InputLabel id="filter-column-label" sx={{ fontSize: '12px' }}>Column</InputLabel>
           <Select
             labelId="filter-column-label"
             id="filter-column"
@@ -235,7 +237,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef }) => {
 
         {/* Operator selector */}
         <FormControl sx={{ minWidth: 180 }} size="small">
-          <InputLabel id="filter-operator-label">Operator</InputLabel>
+          <InputLabel id="filter-operator-label" sx={{ fontSize: '12px' }}>Operator</InputLabel>
           <Select
             labelId="filter-operator-label"
             id="filter-operator"

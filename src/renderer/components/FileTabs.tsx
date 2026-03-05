@@ -41,7 +41,7 @@ export const FileTabs: React.FC = () => {
       sx={{
         borderBottom: 1,
         borderColor: themeMode === 'light' ? colors.light.border.primary : colors.dark.border.primary,
-        bgcolor: themeMode === 'light' ? colors.light.background.secondary : colors.dark.background.secondary,
+        bgcolor: themeMode === 'light' ? colors.light.bg.secondary : colors.dark.bg.secondary,
         px: 2,
         display: 'flex',
         alignItems: 'center',
