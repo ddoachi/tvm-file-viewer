@@ -118,6 +118,12 @@
       "type": "file"
     },
     {
+      "path": "src/renderer/hooks/useCsvImport.ts",
+      "accessCount": 8,
+      "lastAccessed": 1772719874353,
+      "type": "file"
+    },
+    {
       "path": "src/renderer/main.tsx",
       "accessCount": 7,
       "lastAccessed": 1772717896152,
@@ -133,12 +139,6 @@
       "path": "src/preload/index.ts",
       "accessCount": 6,
       "lastAccessed": 1772716758753,
-      "type": "file"
-    },
-    {
-      "path": "src/renderer/hooks/useCsvImport.ts",
-      "accessCount": 6,
-      "lastAccessed": 1772716827494,
       "type": "file"
     },
     {

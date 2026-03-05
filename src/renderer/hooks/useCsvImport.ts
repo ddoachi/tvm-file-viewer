@@ -59,8 +59,16 @@ export function useCsvImport() {
       setRows(rowsWithRelations, fileName);
 
     } catch (error) {
+      console.error('❌ CSV Import Error:', error);
+      console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack');
+
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       setParseErrors([errorMessage]);
+
+      // Show alert for critical errors
+      if (error instanceof Error) {
+        alert(`Import failed: ${error.message}\n\nCheck DevTools Console (F12) for details.`);
+      }
     } finally {
       setLoading(false);
     }
