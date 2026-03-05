@@ -1,9 +1,10 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, IRowNode, ICellRendererParams, RowClickedEvent } from 'ag-grid-community';
+import type { ColDef, IRowNode, RowClickedEvent } from 'ag-grid-community';
 import { useAppStore } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
+import { NetCellRenderer } from './NetCellRenderer';
 import { colors, typography } from '../theme/designSystem';
 
 export const DataGrid: React.FC = () => {
@@ -33,14 +34,9 @@ export const DataGrid: React.FC = () => {
       flex: 2,
       sortable: true,
       resizable: true,
-      cellRenderer: (params: ICellRendererParams<CsvRow>) => {
-        if (!params.data) return '';
-        const depth = getTreeDepth(params.data);
-        const indent = depth * 24;
-        const connector = depth > 0 ? '<span style="color: #2D7FF9; margin-right: 8px;">└─</span>' : '';
-        const netValue = params.value || '';
-
-        return `<div style="padding-left: ${indent}px; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center;">${connector}${netValue}</div>`;
+      cellRenderer: NetCellRenderer,
+      cellRendererParams: {
+        getTreeDepth,
       },
     },
     {

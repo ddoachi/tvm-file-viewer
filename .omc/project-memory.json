@@ -89,8 +89,8 @@
   "hotPaths": [
     {
       "path": "src/renderer/components/DataGrid.tsx",
-      "accessCount": 33,
-      "lastAccessed": 1772720030349,
+      "accessCount": 35,
+      "lastAccessed": 1772720166331,
       "type": "file"
     },
     {
@@ -319,6 +319,12 @@
       "path": "FILTER_GUIDE.md",
       "accessCount": 1,
       "lastAccessed": 1772718675895,
+      "type": "file"
+    },
+    {
+      "path": "src/renderer/components/NetCellRenderer.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772720156567,
       "type": "file"
     }
   ],
