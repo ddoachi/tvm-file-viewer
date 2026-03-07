@@ -1,65 +1,107 @@
-import React from 'react';
-import { Box, Typography, Alert, Paper } from '@mui/material';
-import { useAppStore } from '../store/appStore';
+import React, { useState } from 'react';
+import { Box, Typography, Paper, Tooltip, Divider, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { useAppStore, selectFilterResult } from '../store/appStore';
 
 export function StatusBar() {
-  const { openFiles, activeFileId, parseErrors, isLoading } = useAppStore();
+  const { openFiles, activeFileId, gridFilteredCount, parseErrors, isLoading } = useAppStore();
+  const filterResult = useAppStore(selectFilterResult);
+  const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number } | null>(null);
 
-  // Get active file info
   const activeFile = openFiles.find(f => f.id === activeFileId);
 
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setContextMenu({ mouseX: event.clientX, mouseY: event.clientY });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleOpenInGvim = async () => {
+    if (activeFile?.filePath && window.electronAPI) {
+      try {
+        await window.electronAPI.openInEditor(activeFile.filePath);
+      } catch (err) {
+        console.error('Failed to open in editor:', err);
+      }
+    }
+    handleCloseContextMenu();
+  };
+
   return (
-    <Paper elevation={1} sx={{ p: 2, mt: 2 }}>
-      <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
+    <Paper elevation={1} sx={{ px: 1.5, py: 0.5, mt: 0.5, flexShrink: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minHeight: 28 }}>
         {activeFile && (
           <>
-            <Box>
-              <Typography variant="caption" color="text.secondary">
-                File
-              </Typography>
-              <Typography variant="body2" fontWeight={500}>
+            <Tooltip title="File" arrow>
+              <Typography
+                variant="body2"
+                onContextMenu={handleContextMenu}
+                sx={{ fontSize: 12, fontWeight: 500, cursor: 'default' }}
+              >
                 {activeFile.fileName}
               </Typography>
-            </Box>
+            </Tooltip>
 
-            <Box>
-              <Typography variant="caption" color="text.secondary">
-                Total Rows
-              </Typography>
-              <Typography variant="body2" fontWeight={500}>
+            <Divider orientation="vertical" flexItem />
+
+            <Tooltip title="Total Rows" arrow>
+              <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 500, cursor: 'default' }}>
                 {activeFile.rows.length.toLocaleString()}
               </Typography>
-            </Box>
+            </Tooltip>
+
+            {(filterResult || gridFilteredCount !== null) && (
+              <>
+                <Divider orientation="vertical" flexItem />
+                <Tooltip title="Filtered Rows" arrow>
+                  <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 500, color: 'primary.main', cursor: 'default' }}>
+                    {filterResult
+                      ? filterResult.directMatches.size.toLocaleString()
+                      : gridFilteredCount?.toLocaleString()}
+                  </Typography>
+                </Tooltip>
+              </>
+            )}
           </>
         )}
 
         {isLoading && (
-          <Typography variant="body2" color="primary">
+          <Typography variant="body2" sx={{ fontSize: 12 }} color="primary">
             Loading...
           </Typography>
         )}
 
         {!activeFile && !isLoading && (
-          <Typography variant="body2" color="text.secondary">
-            No file loaded. Click "Import" to get started.
+          <Typography variant="body2" sx={{ fontSize: 12 }} color="text.secondary">
+            No file loaded
           </Typography>
+        )}
+
+        <Box sx={{ flex: 1 }} />
+
+        {parseErrors.length > 0 && (
+          <Tooltip title={parseErrors.join('\n')} arrow>
+            <Typography variant="body2" sx={{ fontSize: 11, color: 'error.main', cursor: 'default' }}>
+              {parseErrors.length} error{parseErrors.length > 1 ? 's' : ''}
+            </Typography>
+          </Tooltip>
         )}
       </Box>
 
-      {parseErrors.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <Alert severity="error">
-            <Typography variant="subtitle2" gutterBottom>
-              Parse Errors ({parseErrors.length})
-            </Typography>
-            {parseErrors.map((error, index) => (
-              <Typography key={index} variant="body2" sx={{ mt: 0.5 }}>
-                {error}
-              </Typography>
-            ))}
-          </Alert>
-        </Box>
-      )}
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={contextMenu ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+      >
+        <MenuItem onClick={handleOpenInGvim} sx={{ fontSize: 13 }}>
+          <ListItemIcon><OpenInNewIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Open with gVim</ListItemText>
+        </MenuItem>
+      </Menu>
     </Paper>
   );
 }

@@ -1,97 +1,71 @@
-import React, { useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, IRowNode, RowClickedEvent, GetDataPath } from 'ag-grid-community';
+import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent } from 'ag-grid-community';
 import 'ag-grid-enterprise';
 import { Box, CircularProgress, Chip } from '@mui/material';
-import { useAppStore } from '../store/appStore';
+import { useAppStore, selectFilterResult } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
 
 export const DataGrid: React.FC = () => {
-  const { openFiles, activeFileId, filterResult, searchText, themeMode, isLoading, isFiltering } = useAppStore();
+  const { openFiles, activeFileId, searchText, themeMode, isLoading, isFiltering, setGridFilteredCount } = useAppStore();
+  const filterResult = useAppStore(selectFilterResult);
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
-  const rows = activeFile?.rows || [];
+  const allRows = activeFile?.rows || [];
 
-  const totalCount = rows.length;
+  // Filter rowData directly — show only rows matching the filter
+  const rows = useMemo(() => {
+    if (!filterResult) return allRows;
+    return allRows.filter(row => filterResult.visibleRowIndices.has(row._rowIndex));
+  }, [allRows, filterResult]);
+
+  const totalCount = allRows.length;
   const matchedCount = filterResult ? filterResult.directMatches.size : 0;
 
-  // Column definitions (Net is handled by autoGroupColumnDef for tree)
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
-    {
-      field: 'Group',
-      headerName: 'Group',
-      flex: 1,
-      sortable: true,
-      resizable: true,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-    },
-    {
-      field: 'Vnet1',
-      headerName: 'Vnet1',
-      flex: 1,
-      sortable: true,
-      resizable: true,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-    },
-    {
-      field: 'Vnet2',
-      headerName: 'Vnet2',
-      flex: 1,
-      sortable: true,
-      resizable: true,
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
-    },
+    { field: 'Group', headerName: 'Group', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'Vnet1', headerName: 'Vnet1', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'Vnet2', headerName: 'Vnet2', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
   ], []);
 
-  // Auto group column for tree display
   const autoGroupColumnDef = useMemo<ColDef>(() => ({
     headerName: 'Net',
     flex: 2,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     resizable: true,
-    cellRendererParams: {
-      suppressCount: true,
-    },
+    cellRendererParams: { suppressCount: true },
   }), []);
 
   const defaultColDef = useMemo<ColDef>(() => ({
-    sortable: true,
-    resizable: true,
-    flex: 1,
-    filter: true,
-    suppressHeaderMenuButton: false,
+    sortable: true, resizable: true, flex: 1, filter: true, suppressHeaderMenuButton: false,
   }), []);
 
-  // Tree data path from dot-separated Net names
-  const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => {
-    return data.Net.split('.');
-  }, []);
+  const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => data.Net.split('.'), []);
 
-  // External filter callbacks
-  const isExternalFilterPresent = useCallback(() => {
-    return filterResult !== null;
-  }, [filterResult]);
-
-  const doesExternalFilterPass = useCallback(
-    (node: IRowNode<CsvRow>) => {
-      if (!filterResult || !node.data) return true;
-      return filterResult.visibleRowIndices.has(node.data._rowIndex);
-    },
-    [filterResult]
-  );
-
-  // Row click handler for crossprobing
   const handleRowClick = useCallback((event: RowClickedEvent<CsvRow>) => {
     if (event.data && window.electronAPI) {
       window.electronAPI.onRowClick(event.data);
     }
   }, []);
+
+  const handleFilterChanged = useCallback((_event: FilterChangedEvent<CsvRow>) => {
+    const api = gridRef.current?.api;
+    if (!api) return;
+    let count = 0;
+    api.forEachNodeAfterFilter(() => { count++; });
+    setGridFilteredCount(count < rows.length ? count : null);
+  }, [rows.length, setGridFilteredCount]);
+
+  // Clear AG Grid column filters when switching tabs
+  useEffect(() => {
+    const api = gridRef.current?.api;
+    if (api) {
+      api.setFilterModel(null);
+    }
+  }, [activeFileId]);
 
   const isBusy = isLoading || isFiltering;
   const themeClass = themeMode === 'light'
@@ -99,37 +73,19 @@ export const DataGrid: React.FC = () => {
     : 'ag-theme-quartz-dark ag-theme-tvm-dark';
 
   return (
-    <>
-      <FilterPanel gridRef={gridRef} disabled={isBusy} />
-
-      {/* Count chips */}
-      {totalCount > 0 && (
-        <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-          <Chip label={`Total: ${totalCount.toLocaleString()}`} size="small" variant="outlined" />
-          {filterResult && (
-            <Chip
-              label={`Matched: ${matchedCount.toLocaleString()}`}
-              size="small"
-              color="primary"
-              variant="outlined"
-            />
-          )}
-        </Box>
-      )}
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, gap: 0.5 }}>
+      <FilterPanel disabled={isBusy} />
 
       <div
         className={themeClass}
-        style={{ height: '100%', width: '100%', position: 'relative' }}
+        style={{ flex: '1 1 0', width: '100%', position: 'relative', overflow: 'hidden' }}
       >
         {isBusy && (
           <Box sx={{
             position: 'absolute',
             top: 0, left: 0, right: 0, bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: 'rgba(255,255,255,0.7)',
-            zIndex: 10,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            bgcolor: 'rgba(255,255,255,0.7)', zIndex: 10,
           }}>
             <CircularProgress />
           </Box>
@@ -148,9 +104,8 @@ export const DataGrid: React.FC = () => {
           floatingFiltersHeight={28}
           animateRows={false}
           quickFilterText={searchText}
-          isExternalFilterPresent={isExternalFilterPresent}
-          doesExternalFilterPass={doesExternalFilterPass}
           onRowClicked={handleRowClick}
+          onFilterChanged={handleFilterChanged}
           rowBuffer={20}
           suppressColumnVirtualisation={false}
           overlayNoRowsTemplate={
@@ -161,6 +116,6 @@ export const DataGrid: React.FC = () => {
           }
         />
       </div>
-    </>
+    </Box>
   );
 };

@@ -14,9 +14,10 @@ interface AppState {
   parseErrors: string[];
   isLoading: boolean;
   isFiltering: boolean;
-  filterResult: FilterResult | null;
+  filterResults: Record<string, FilterResult>; // per-file filter results
   searchText: string;
   themeMode: 'light' | 'dark';
+  gridFilteredCount: number | null;
   addFile: (file: OpenFile) => void;
   removeFile: (fileId: string) => void;
   setActiveFile: (fileId: string) => void;
@@ -26,9 +27,16 @@ interface AppState {
   setFilterResult: (result: FilterResult | null) => void;
   setSearchText: (text: string) => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
+  setGridFilteredCount: (count: number | null) => void;
   renameFile: (fileId: string, newName: string) => void;
   reset: () => void;
 }
+
+// Selector to get filterResult for active file
+export const selectFilterResult = (state: AppState): FilterResult | null => {
+  const id = state.activeFileId;
+  return id ? (state.filterResults[id] ?? null) : null;
+};
 
 export const useAppStore = create<AppState>((set) => ({
   openFiles: [],
@@ -36,14 +44,16 @@ export const useAppStore = create<AppState>((set) => ({
   parseErrors: [],
   isLoading: false,
   isFiltering: false,
-  filterResult: null,
+  filterResults: {},
   searchText: '',
   themeMode: 'light',
+  gridFilteredCount: null,
 
   addFile: (file) => set((state) => ({
     openFiles: [...state.openFiles, file],
     activeFileId: file.id,
     parseErrors: [],
+    gridFilteredCount: null,
   })),
 
   removeFile: (fileId) => set((state) => {
@@ -59,13 +69,17 @@ export const useAppStore = create<AppState>((set) => ({
       }
     }
 
+    const { [fileId]: _, ...remainingResults } = state.filterResults;
+
     return {
       openFiles: newFiles,
       activeFileId: newActiveId,
+      filterResults: remainingResults,
+      gridFilteredCount: null,
     };
   }),
 
-  setActiveFile: (fileId) => set({ activeFileId: fileId }),
+  setActiveFile: (fileId) => set({ activeFileId: fileId, gridFilteredCount: null }),
 
   setParseErrors: (errors) => set({ parseErrors: errors }),
 
@@ -73,11 +87,22 @@ export const useAppStore = create<AppState>((set) => ({
 
   setFiltering: (filtering) => set({ isFiltering: filtering }),
 
-  setFilterResult: (result) => set({ filterResult: result }),
+  setFilterResult: (result) => set((state) => {
+    const id = state.activeFileId;
+    if (!id) return {};
+    if (result) {
+      return { filterResults: { ...state.filterResults, [id]: result } };
+    } else {
+      const { [id]: _, ...rest } = state.filterResults;
+      return { filterResults: rest };
+    }
+  }),
 
   setSearchText: (text) => set({ searchText: text }),
 
   setThemeMode: (mode) => set({ themeMode: mode }),
+
+  setGridFilteredCount: (count) => set({ gridFilteredCount: count }),
 
   renameFile: (fileId, newName) => set((state) => ({
     openFiles: state.openFiles.map(f =>
@@ -91,8 +116,9 @@ export const useAppStore = create<AppState>((set) => ({
     parseErrors: [],
     isLoading: false,
     isFiltering: false,
-    filterResult: null,
+    filterResults: {},
     searchText: '',
-    themeMode: 'light'
+    themeMode: 'light',
+    gridFilteredCount: null,
   }),
 }));

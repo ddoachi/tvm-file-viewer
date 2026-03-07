@@ -1,15 +1,18 @@
 import React, { useMemo, useCallback } from 'react';
 import {
-  Paper,
   Box,
   TextField,
-  Typography,
   InputAdornment,
   IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-import type { AgGridReact } from 'ag-grid-react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import type { CsvRow, FilterCondition } from '../types';
 import { useAppStore } from '../store/appStore';
 import { parseFilterExpression } from '../services/expressionParser';
@@ -18,11 +21,10 @@ import { FilterBuilder } from './FilterBuilder';
 import { parseFormula } from '../services/formulaParser';
 
 interface FilterPanelProps {
-  gridRef: React.RefObject<AgGridReact<CsvRow> | null>;
   disabled?: boolean;
 }
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef, disabled }) => {
+export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
   const { searchText, setSearchText, openFiles, activeFileId, setFilterResult, setFiltering } = useAppStore();
 
   const rows = useMemo(() => {
@@ -41,7 +43,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef, disabled }) =
   const handleVisualApply = useCallback((expression: string) => {
     setFiltering(true);
 
-    // Use setTimeout to let the UI update with the loading spinner before the heavy computation
     setTimeout(() => {
       try {
         if (expression.startsWith('FORMULA:')) {
@@ -67,66 +68,29 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef, disabled }) =
 
           if (!parseResult.isValid || !parseResult.evaluate) { setFiltering(false); return; }
 
-          const filteredIndices = new Set<number>();
-          const matchedGroups = new Set<string>();
-
-          for (const row of rows) {
-            const varMap = new Map<string, boolean>();
-            conditions.forEach((cond, index) => {
-              const varName = String.fromCharCode(65 + index);
-              const fieldValue = row[cond.field]?.toString().toLowerCase() || '';
-              const targetValue = cond.value.toLowerCase();
-
-              let matches = false;
-              switch (cond.operator) {
-                case 'equals': matches = fieldValue === targetValue; break;
-                case 'notEquals': matches = fieldValue !== targetValue; break;
-                case 'contains': matches = fieldValue.includes(targetValue); break;
-                case 'startsWith': matches = fieldValue.startsWith(targetValue); break;
-                case 'endsWith': matches = fieldValue.endsWith(targetValue); break;
-                default: matches = false;
-              }
-              varMap.set(varName, matches);
-            });
-
-            if (parseResult.evaluate!(varMap)) {
-              filteredIndices.add(row._rowIndex);
-              matchedGroups.add(row.Group);
-            }
-          }
-
-          const visibleRowIndices = new Set<number>();
-          for (const row of rows) {
-            if (matchedGroups.has(row.Group)) {
-              visibleRowIndices.add(row._rowIndex);
-            }
-          }
-
-          setFilterResult({ directMatches: filteredIndices, matchedGroups, visibleRowIndices });
-          gridRef.current?.api?.onFilterChanged();
+          const result = applyGroupFilter(rows, conditions, parseResult.evaluate);
+          setFilterResult(result);
         } else {
           const parsed = parseFilterExpression(expression);
           if (!parsed) { setFiltering(false); return; }
 
           const result = applyGroupFilter(rows, parsed.conditions);
           setFilterResult(result);
-          gridRef.current?.api?.onFilterChanged();
         }
       } finally {
         setFiltering(false);
       }
     }, 50);
-  }, [rows, setFilterResult, setFiltering, gridRef]);
+  }, [rows, setFilterResult, setFiltering]);
 
   const handleVisualClear = () => {
     setFilterResult(null);
-    gridRef.current?.api?.onFilterChanged();
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 2, opacity: disabled ? 0.6 : 1, pointerEvents: disabled ? 'none' : 'auto' }}>
-      {/* Global search at top */}
-      <Box sx={{ mb: 3 }}>
+    <Box sx={{ flexShrink: 0, opacity: disabled ? 0.6 : 1, pointerEvents: disabled ? 'none' : 'auto', maxWidth: 1000, mx: 'auto', width: '100%' }}>
+      {/* Global search */}
+      <Box sx={{ mb: 1 }}>
         <TextField
           fullWidth
           size="small"
@@ -151,17 +115,48 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ gridRef, disabled }) =
         />
       </Box>
 
-      {/* Filter title */}
-      <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
-        Filter
-      </Typography>
-
-      {/* Visual Builder directly - no tabs */}
-      <FilterBuilder
-        rows={rows}
-        onApply={handleVisualApply}
-        onClear={handleVisualClear}
-      />
-    </Paper>
+      {/* Collapsible Filter Panel */}
+      <Accordion
+        defaultExpanded
+        disableGutters
+        sx={{
+          mb: 1,
+          '&:before': { display: 'none' },
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: '4px !important',
+          '& .MuiAccordionSummary-root': {
+            minHeight: 36,
+            '&.Mui-expanded': { minHeight: 36 },
+          },
+          '& .MuiAccordionSummary-content': {
+            my: 0.5,
+            '&.Mui-expanded': { my: 0.5 },
+          },
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            '&:hover': { bgcolor: 'action.hover' },
+            transition: 'background-color 0.15s',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <FilterListIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+            <Typography variant="subtitle2" sx={{ fontSize: 12, fontWeight: 600 }}>
+              Filter
+            </Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 0, pb: 1.5, px: 2 }}>
+          <FilterBuilder
+            rows={rows}
+            onApply={handleVisualApply}
+            onClear={handleVisualClear}
+          />
+        </AccordionDetails>
+      </Accordion>
+    </Box>
   );
 };

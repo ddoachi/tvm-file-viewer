@@ -4,12 +4,9 @@ import {
   Autocomplete,
   TextField,
   IconButton,
-  Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import type { CsvRow } from '../types/index';
-import { colors } from '../theme/designSystem';
 
 export interface Condition {
   id: string;
@@ -25,16 +22,17 @@ interface ConditionBlockProps {
   columnValues: Map<string, Set<string>>;
   showDragHandle?: boolean;
   variable?: string;
+  variableColor?: string;
 }
 
 const COLUMNS: Array<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>> = ['Net', 'Group', 'Vnet1', 'Vnet2'];
 
 const OPERATORS = [
-  { value: '==', label: 'equals', symbol: '=', color: colors.primary.main },
-  { value: '!=', label: 'not equals', symbol: '≠', color: colors.semantic.error },
-  { value: '~=', label: 'contains', symbol: '⊃', color: colors.semantic.success },
-  { value: '^=', label: 'starts with', symbol: 'A…', color: colors.semantic.warning },
-  { value: '$=', label: 'ends with', symbol: '…Z', color: colors.semantic.info },
+  { value: '==', label: 'equals' },
+  { value: '!=', label: 'not equals' },
+  { value: '~=', label: 'contains' },
+  { value: '^=', label: 'starts with' },
+  { value: '$=', label: 'ends with' },
 ];
 
 export const ConditionBlock: React.FC<ConditionBlockProps> = ({
@@ -42,8 +40,8 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
   onChange,
   onDelete,
   columnValues,
-  showDragHandle = false,
   variable,
+  variableColor = '#2D7FF9',
 }) => {
   const valueOptions = useMemo(() => {
     if (!condition.column) return [];
@@ -52,56 +50,42 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
   }, [condition.column, columnValues]);
 
   const handleColumnChange = (_event: React.SyntheticEvent, value: string | null) => {
-    onChange({
-      ...condition,
-      column: (value || '') as Condition['column'],
-      value: '',
-    });
+    onChange({ ...condition, column: (value || '') as Condition['column'], value: '' });
   };
 
   const handleOperatorChange = (_event: React.SyntheticEvent, value: string | null) => {
-    onChange({
-      ...condition,
-      operator: value || '==',
-    });
+    onChange({ ...condition, operator: value || '==' });
   };
 
   const handleValueChange = (_event: React.SyntheticEvent, value: string | null) => {
-    onChange({
-      ...condition,
-      value: value || '',
-    });
+    onChange({ ...condition, value: value || '' });
   };
-
-  const selectedOperator = OPERATORS.find(op => op.value === condition.operator);
 
   return (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 1,
+        gap: 0.75,
+        py: 0.25,
+        px: 0.5,
+        borderRadius: 0.5,
+        '&:hover': { bgcolor: 'action.hover' },
       }}
     >
-      {showDragHandle && (
-        <DragIndicatorIcon
-          sx={{ cursor: 'grab', color: 'text.secondary', fontSize: 20 }}
-        />
-      )}
-
-      {/* Variable Label */}
+      {/* Variable badge */}
       {variable && (
         <Box
           sx={{
-            width: 24,
-            height: 24,
+            width: 22,
+            height: 22,
             borderRadius: '50%',
-            backgroundColor: colors.primary.main,
+            bgcolor: variableColor,
             color: 'white',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: 700,
             flexShrink: 0,
           }}
@@ -110,7 +94,7 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
         </Box>
       )}
 
-      {/* Column Selector */}
+      {/* Column */}
       <Autocomplete
         size="small"
         options={COLUMNS}
@@ -119,16 +103,15 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Column"
-            placeholder="Select..."
-            InputLabelProps={{ sx: { fontSize: 12 } }}
-            sx={{ '& .MuiInputBase-input': { fontSize: 12 } }}
+            placeholder="Col"
+            sx={{ '& .MuiInputBase-input': { fontSize: 11, py: '2px !important' } }}
           />
         )}
-        sx={{ minWidth: 120 }}
+        sx={{ flex: 2, minWidth: 80 }}
+        disableClearable
       />
 
-      {/* Operator Selector */}
+      {/* Operator */}
       <Autocomplete
         size="small"
         options={OPERATORS.map(op => op.value)}
@@ -136,91 +119,55 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
         onChange={handleOperatorChange}
         getOptionLabel={(option) => {
           const op = OPERATORS.find(o => o.value === option);
-          return op ? `${op.value} ${op.label}` : option;
+          return op ? `${op.value}` : option;
         }}
         renderOption={({ key, ...optionProps }, option) => {
           const op = OPERATORS.find(o => o.value === option);
           return (
-            <li key={key} {...optionProps}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box sx={{
-                  width: 24, height: 24, borderRadius: '4px',
-                  bgcolor: op?.color, color: 'white',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 700, fontFamily: 'monospace',
-                  flexShrink: 0,
-                }}>
-                  {op?.symbol}
-                </Box>
-                <Typography sx={{ fontSize: 12 }}>{op?.label}</Typography>
-              </Box>
+            <li key={key} {...optionProps} style={{ fontSize: 12 }}>
+              <code style={{ marginRight: 6, fontWeight: 600 }}>{op?.value}</code>
+              <span style={{ color: '#888' }}>{op?.label}</span>
             </li>
           );
         }}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Operator"
-            InputLabelProps={{ sx: { fontSize: 12 } }}
-            sx={{ '& .MuiInputBase-input': { fontSize: 12 } }}
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: selectedOperator && (
-                <Box sx={{
-                  px: 0.75, py: 0.25, borderRadius: '4px',
-                  bgcolor: `${selectedOperator.color}18`,
-                  color: selectedOperator.color,
-                  fontSize: 11, fontWeight: 600, fontFamily: 'monospace',
-                  ml: 0.5, lineHeight: 1.2,
-                  border: `1px solid ${selectedOperator.color}40`,
-                  whiteSpace: 'nowrap',
-                }}>
-                  {selectedOperator.value}
-                </Box>
-              ),
+            sx={{
+              '& .MuiInputBase-input': { fontSize: 11, fontFamily: 'monospace', fontWeight: 600, py: '2px !important' },
             }}
           />
         )}
-        sx={{ minWidth: 140 }}
+        sx={{ flex: 1, minWidth: 60 }}
         disableClearable
+        slotProps={{ popper: { sx: { minWidth: 160 } } }}
       />
 
-      {/* Value Input with Autocomplete */}
+      {/* Value */}
       <Autocomplete
         size="small"
         freeSolo
+        forcePopupIcon
         options={valueOptions}
         value={condition.value}
         onChange={handleValueChange}
         onInputChange={(_event, newValue) => {
-          onChange({
-            ...condition,
-            value: newValue,
-          });
+          onChange({ ...condition, value: newValue });
         }}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Value"
-            placeholder="Enter or select..."
-            InputLabelProps={{ sx: { fontSize: 12 } }}
-            sx={{ '& .MuiInputBase-input': { fontSize: 12 } }}
+            placeholder="Value"
+            sx={{ '& .MuiInputBase-input': { fontSize: 11, py: '2px !important' } }}
           />
         )}
-        ListboxProps={{
-          style: { maxHeight: 200 },
-        }}
-        sx={{ minWidth: 180, flex: 1 }}
+        ListboxProps={{ style: { maxHeight: 200 } }}
+        sx={{ flex: 3, minWidth: 100 }}
       />
 
-      {/* Delete Button */}
-      <IconButton
-        size="small"
-        onClick={onDelete}
-        color="error"
-        sx={{ p: 0.5 }}
-      >
-        <DeleteIcon fontSize="small" />
+      {/* Delete */}
+      <IconButton size="small" onClick={onDelete} sx={{ p: 0.25, color: 'text.disabled', '&:hover': { color: 'error.main' } }}>
+        <DeleteIcon sx={{ fontSize: 16 }} />
       </IconButton>
     </Box>
   );

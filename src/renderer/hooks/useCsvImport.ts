@@ -13,16 +13,17 @@ export function useCsvImport() {
         throw new Error('Electron API not available. Please restart the application.');
       }
 
-      setLoading(true);
       setParseErrors([]);
 
-      // Open file dialog
+      // Open file dialog (no spinner yet — user hasn't picked a file)
       const filePath = await window.electronAPI.openFileDialog();
 
       if (!filePath) {
-        setLoading(false);
         return;
       }
+
+      // File selected — now show loading spinner
+      setLoading(true);
 
       // Read file content
       const content = await window.electronAPI.readFile(filePath);

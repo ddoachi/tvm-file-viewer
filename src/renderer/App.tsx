@@ -20,8 +20,10 @@ function App() {
         <AppHeader />
         <FileTabs />
 
-        <Container maxWidth="xl" sx={{ flex: 1, py: 3, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+        <Box sx={{ height: 4, flexShrink: 0 }} />
+
+        <Container maxWidth="xl" sx={{ flex: 1, py: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
+          <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <DataGrid />
           </Box>
 

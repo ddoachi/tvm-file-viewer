@@ -1,10 +1,9 @@
-import { useState, useCallback, useMemo, RefObject } from 'react';
-import type { AgGridReact } from 'ag-grid-react';
+import { useState, useCallback, useMemo } from 'react';
 import type { CsvRow, FilterCondition, FilterOperator } from '../types';
 import { useAppStore } from '../store/appStore';
 import { applyGroupFilter } from '../services/groupFilter';
 
-export function useGroupFilter(gridRef: RefObject<AgGridReact<CsvRow> | null>) {
+export function useGroupFilter() {
   const { openFiles, activeFileId, setFilterResult } = useAppStore();
 
   // Get rows from active file (fixes: 'rows' doesn't exist on AppState)
@@ -24,8 +23,7 @@ export function useGroupFilter(gridRef: RefObject<AgGridReact<CsvRow> | null>) {
     const result = applyGroupFilter(rows, conditions);
     setActiveConditions(conditions);
     setFilterResult(result);
-    gridRef.current?.api?.onFilterChanged();
-  }, [column, operator, value, rows, setFilterResult, gridRef]);
+  }, [column, operator, value, rows, setFilterResult]);
 
   const clearFilter = useCallback(() => {
     setColumn('Net');
@@ -33,12 +31,13 @@ export function useGroupFilter(gridRef: RefObject<AgGridReact<CsvRow> | null>) {
     setValue('');
     setActiveConditions([]);
     setFilterResult(null);
-    gridRef.current?.api?.onFilterChanged();
-  }, [setFilterResult, gridRef]);
+  }, [setFilterResult]);
 
-  const matchedGroupCount = useAppStore(state =>
-    state.filterResult?.matchedGroups.size ?? 0
-  );
+  const matchedGroupCount = useAppStore(state => {
+    const id = state.activeFileId;
+    const result = id ? state.filterResults[id] : null;
+    return result?.matchedGroups.size ?? 0;
+  });
 
   return {
     column, setColumn, operator, setOperator, value, setValue,
