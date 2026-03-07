@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
 import {
-  Paper,
   Box,
   Autocomplete,
   TextField,
   IconButton,
-  Chip,
+  Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import type { CsvRow } from '../types/index';
+import { colors } from '../theme/designSystem';
 
 export interface Condition {
   id: string;
@@ -30,11 +30,11 @@ interface ConditionBlockProps {
 const COLUMNS: Array<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>> = ['Net', 'Group', 'Vnet1', 'Vnet2'];
 
 const OPERATORS = [
-  { value: '==', label: '== (equals)', color: '#1976d2' },
-  { value: '!=', label: '!= (not equals)', color: '#d32f2f' },
-  { value: '~=', label: '~= (contains)', color: '#388e3c' },
-  { value: '^=', label: '^= (starts with)', color: '#f57c00' },
-  { value: '$=', label: '$= (ends with)', color: '#7b1fa2' },
+  { value: '==', label: 'equals', symbol: '=', color: colors.primary.main },
+  { value: '!=', label: 'not equals', symbol: '≠', color: colors.semantic.error },
+  { value: '~=', label: 'contains', symbol: '⊃', color: colors.semantic.success },
+  { value: '^=', label: 'starts with', symbol: 'A…', color: colors.semantic.warning },
+  { value: '$=', label: 'ends with', symbol: '…Z', color: colors.semantic.info },
 ];
 
 export const ConditionBlock: React.FC<ConditionBlockProps> = ({
@@ -45,14 +45,9 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
   showDragHandle = false,
   variable,
 }) => {
-  // Get unique values for selected column
   const valueOptions = useMemo(() => {
-    if (!condition.column) {
-      console.log('ConditionBlock: No column selected');
-      return [];
-    }
+    if (!condition.column) return [];
     const values = columnValues.get(condition.column);
-    console.log(`ConditionBlock: Column=${condition.column}, Values=`, values ? Array.from(values) : 'undefined');
     return values ? Array.from(values).sort() : [];
   }, [condition.column, columnValues]);
 
@@ -60,7 +55,7 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
     onChange({
       ...condition,
       column: (value || '') as Condition['column'],
-      value: '', // Reset value when column changes
+      value: '',
     });
   };
 
@@ -81,25 +76,16 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
   const selectedOperator = OPERATORS.find(op => op.value === condition.operator);
 
   return (
-    <Paper
-      elevation={1}
+    <Box
       sx={{
-        p: 1,
         display: 'flex',
         alignItems: 'center',
         gap: 1,
-        backgroundColor: 'background.paper',
-        border: '1px solid',
-        borderColor: 'divider',
       }}
     >
       {showDragHandle && (
         <DragIndicatorIcon
-          sx={{
-            cursor: 'grab',
-            color: 'text.secondary',
-            fontSize: 20,
-          }}
+          sx={{ cursor: 'grab', color: 'text.secondary', fontSize: 20 }}
         />
       )}
 
@@ -110,7 +96,7 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
             width: 24,
             height: 24,
             borderRadius: '50%',
-            backgroundColor: '#2D7FF9',
+            backgroundColor: colors.primary.main,
             color: 'white',
             display: 'flex',
             alignItems: 'center',
@@ -140,7 +126,6 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
           />
         )}
         sx={{ minWidth: 120 }}
-        disableClearable
       />
 
       {/* Operator Selector */}
@@ -151,21 +136,24 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
         onChange={handleOperatorChange}
         getOptionLabel={(option) => {
           const op = OPERATORS.find(o => o.value === option);
-          return op?.label || option;
+          return op ? `${op.value} ${op.label}` : option;
         }}
-        renderOption={(props, option) => {
+        renderOption={({ key, ...optionProps }, option) => {
           const op = OPERATORS.find(o => o.value === option);
           return (
-            <li {...props}>
-              <Chip
-                label={op?.label || option}
-                size="small"
-                sx={{
-                  backgroundColor: op?.color || '#666',
-                  color: 'white',
-                  fontSize: 11,
-                }}
-              />
+            <li key={key} {...optionProps}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{
+                  width: 24, height: 24, borderRadius: '4px',
+                  bgcolor: op?.color, color: 'white',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 700, fontFamily: 'monospace',
+                  flexShrink: 0,
+                }}>
+                  {op?.symbol}
+                </Box>
+                <Typography sx={{ fontSize: 12 }}>{op?.label}</Typography>
+              </Box>
             </li>
           );
         }}
@@ -178,17 +166,17 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
             InputProps={{
               ...params.InputProps,
               startAdornment: selectedOperator && (
-                <Chip
-                  label={selectedOperator.value}
-                  size="small"
-                  sx={{
-                    backgroundColor: selectedOperator.color,
-                    color: 'white',
-                    fontSize: 11,
-                    height: 20,
-                    ml: 0.5,
-                  }}
-                />
+                <Box sx={{
+                  px: 0.75, py: 0.25, borderRadius: '4px',
+                  bgcolor: `${selectedOperator.color}18`,
+                  color: selectedOperator.color,
+                  fontSize: 11, fontWeight: 600, fontFamily: 'monospace',
+                  ml: 0.5, lineHeight: 1.2,
+                  border: `1px solid ${selectedOperator.color}40`,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {selectedOperator.value}
+                </Box>
               ),
             }}
           />
@@ -234,6 +222,6 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
       >
         <DeleteIcon fontSize="small" />
       </IconButton>
-    </Paper>
+    </Box>
   );
 };

@@ -40,7 +40,7 @@ export const FileTabs: React.FC = () => {
     <Box
       sx={{
         borderBottom: 1,
-        borderColor: themeMode === 'light' ? colors.light.border.primary : colors.dark.border.primary,
+        borderColor: themeMode === 'light' ? colors.light.border.default : colors.dark.border.default,
         bgcolor: themeMode === 'light' ? colors.light.bg.secondary : colors.dark.bg.secondary,
         px: 2,
         display: 'flex',

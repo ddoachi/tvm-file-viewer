@@ -2,6 +2,7 @@ export interface ElectronAPI {
   openFileDialog(): Promise<string | null>;
   readFile(filePath: string): Promise<string>;
   onRowClick(rowData: any): Promise<void>;
+  openInEditor(filePath: string): Promise<void>;
 }
 
 declare global {
