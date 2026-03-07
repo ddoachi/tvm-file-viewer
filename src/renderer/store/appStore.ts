@@ -4,6 +4,7 @@ import type { CsvRow, FilterResult } from '../types';
 export interface OpenFile {
   id: string;
   fileName: string;
+  filePath: string;
   rows: CsvRow[];
 }
 
@@ -12,6 +13,7 @@ interface AppState {
   activeFileId: string | null;
   parseErrors: string[];
   isLoading: boolean;
+  isFiltering: boolean;
   filterResult: FilterResult | null;
   searchText: string;
   themeMode: 'light' | 'dark';
@@ -20,9 +22,11 @@ interface AppState {
   setActiveFile: (fileId: string) => void;
   setParseErrors: (errors: string[]) => void;
   setLoading: (loading: boolean) => void;
+  setFiltering: (filtering: boolean) => void;
   setFilterResult: (result: FilterResult | null) => void;
   setSearchText: (text: string) => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
+  renameFile: (fileId: string, newName: string) => void;
   reset: () => void;
 }
 
@@ -31,6 +35,7 @@ export const useAppStore = create<AppState>((set) => ({
   activeFileId: null,
   parseErrors: [],
   isLoading: false,
+  isFiltering: false,
   filterResult: null,
   searchText: '',
   themeMode: 'light',
@@ -45,11 +50,9 @@ export const useAppStore = create<AppState>((set) => ({
     const newFiles = state.openFiles.filter(f => f.id !== fileId);
     let newActiveId = state.activeFileId;
 
-    // If removing active file, switch to another
     if (state.activeFileId === fileId) {
       if (newFiles.length > 0) {
         const removedIndex = state.openFiles.findIndex(f => f.id === fileId);
-        // Try to activate the next file, or previous if it was the last
         newActiveId = newFiles[Math.min(removedIndex, newFiles.length - 1)]?.id || null;
       } else {
         newActiveId = null;
@@ -68,17 +71,26 @@ export const useAppStore = create<AppState>((set) => ({
 
   setLoading: (loading) => set({ isLoading: loading }),
 
+  setFiltering: (filtering) => set({ isFiltering: filtering }),
+
   setFilterResult: (result) => set({ filterResult: result }),
 
   setSearchText: (text) => set({ searchText: text }),
 
   setThemeMode: (mode) => set({ themeMode: mode }),
 
+  renameFile: (fileId, newName) => set((state) => ({
+    openFiles: state.openFiles.map(f =>
+      f.id === fileId ? { ...f, fileName: newName } : f
+    ),
+  })),
+
   reset: () => set({
     openFiles: [],
     activeFileId: null,
     parseErrors: [],
     isLoading: false,
+    isFiltering: false,
     filterResult: null,
     searchText: '',
     themeMode: 'light'

@@ -62,6 +62,7 @@ export function useCsvImport() {
       addFile({
         id: fileId,
         fileName,
+        filePath,
         rows: rowsWithRelations,
       });
 

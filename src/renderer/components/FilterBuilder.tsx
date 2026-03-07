@@ -1,19 +1,20 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   Box,
-  Button,
-  ToggleButton,
-  ToggleButtonGroup,
+  IconButton,
   Typography,
   TextField,
   Alert,
+  Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ClearIcon from '@mui/icons-material/Clear';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ConditionBlock, type Condition } from './ConditionBlock';
 import type { CsvRow } from '../types/index';
 import { parseFormula, indexToVariable } from '../services/formulaParser';
 
-// Simple UUID generator
 const generateId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 interface FilterBuilderProps {
@@ -34,33 +35,27 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   const [formula, setFormula] = useState<string>('');
   const [formulaError, setFormulaError] = useState<string>('');
 
-  // Extract unique values for each column
+  // Extract unique values for each column (sample for large datasets)
   const columnValues = useMemo(() => {
     const map = new Map<string, Set<string>>();
     const columns: Array<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>> = ['Net', 'Group', 'Vnet1', 'Vnet2'];
 
-    columns.forEach(col => {
-      map.set(col, new Set());
-    });
+    columns.forEach(col => map.set(col, new Set()));
 
-    if (!rows || rows.length === 0) {
-      console.log('FilterBuilder: No rows data');
-      return map;
-    }
+    if (!rows || rows.length === 0) return map;
 
-    console.log(`FilterBuilder: Processing ${rows.length} rows`);
-    console.log('FilterBuilder: Sample row structure:', rows[0]);
+    const sampleSize = Math.min(rows.length, 10000);
+    const step = Math.max(1, Math.floor(rows.length / sampleSize));
 
-    rows.forEach(row => {
+    for (let i = 0; i < rows.length; i += step) {
+      const row = rows[i];
       columns.forEach(col => {
         const value = row[col];
         if (value !== null && value !== undefined && value !== '') {
           map.get(col)?.add(String(value));
         }
       });
-    });
-
-    console.log('FilterBuilder: columnValues populated:', Array.from(map.entries()).map(([k, v]) => `${k}=${v.size}`));
+    }
 
     return map;
   }, [rows]);
@@ -84,34 +79,20 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   const handleDeleteCondition = useCallback((index: number) => {
     setConditions(prev => prev.filter((_, i) => i !== index));
     setConnectors(prev => {
-      // Remove the connector before this condition
       if (index > 0) {
         return prev.filter((_, i) => i !== index - 1);
       }
-      // Or remove the connector after if it's the first condition
       return prev.filter((_, i) => i !== 0);
     });
   }, []);
 
-  const handleConnectorChange = useCallback((index: number, value: 'AND' | 'OR') => {
-    setConnectors(prev => {
-      const newConnectors = [...prev];
-      newConnectors[index] = value;
-      return newConnectors;
-    });
-  }, []);
-
   const handleApply = useCallback(() => {
-    // Convert visual conditions to expression
     const validConditions = conditions.filter(
       c => c.column && c.operator && c.value
     );
 
-    if (validConditions.length === 0) {
-      return;
-    }
+    if (validConditions.length === 0) return;
 
-    // If formula is provided, validate it
     if (formula.trim()) {
       const variables = new Set(
         validConditions.map((_, index) => indexToVariable(index))
@@ -125,20 +106,15 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
 
       setFormulaError('');
 
-      // Build expression with formula
       const expressionParts = validConditions.map((c) => {
         return `${c.column}${c.operator}${c.value}`;
       });
 
-      // Pass formula to parent (parent will need to handle formula evaluation)
       onApply(`FORMULA:${formula}:${expressionParts.join('|||')}`);
     } else {
-      // No formula - use simple AND/OR connectors
       const expressionParts = validConditions.map((c, index) => {
         const condStr = `${c.column}${c.operator}${c.value}`;
-        if (index === 0) {
-          return condStr;
-        }
+        if (index === 0) return condStr;
         const connector = connectors[index - 1] === 'OR' ? ' || ' : ' && ';
         return `${connector}${condStr}`;
       });
@@ -156,98 +132,129 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
     onClear();
   }, [onClear]);
 
-  const isValid = conditions.some(c => c.column && c.value);
+  const hasValidCondition = conditions.some(c => c.column && c.value);
+  const isValid = hasValidCondition && formula.trim() !== '';
 
   return (
     <Box>
       {/* Condition Blocks */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         {conditions.map((condition, index) => (
-          <Box key={condition.id} sx={{ mb: 1 }}>
-            <ConditionBlock
-              condition={condition}
-              onChange={(c) => handleConditionChange(index, c)}
-              onDelete={() => handleDeleteCondition(index)}
-              columnValues={columnValues}
-              showDragHandle={false}
-              variable={indexToVariable(index)}
-            />
-          </Box>
+          <ConditionBlock
+            key={condition.id}
+            condition={condition}
+            onChange={(c) => handleConditionChange(index, c)}
+            onDelete={() => handleDeleteCondition(index)}
+            columnValues={columnValues}
+            showDragHandle={false}
+            variable={indexToVariable(index)}
+          />
         ))}
       </Box>
 
-      {/* AND/OR toggles removed - use formula input below instead */}
-
-      {/* Boolean Formula */}
+      {/* Add Condition button */}
       <Box sx={{ mt: 2, mb: 2 }}>
+        <Tooltip title="Add Condition">
+          <IconButton
+            onClick={handleAddCondition}
+            color="primary"
+            sx={{
+              border: '1px dashed',
+              borderColor: 'divider',
+              borderRadius: 1,
+              px: 3,
+              py: 0.75,
+              fontSize: 13,
+              gap: 0.5,
+            }}
+          >
+            <AddIcon />
+            <span style={{ fontSize: 12, fontWeight: 500 }}>Add</span>
+          </IconButton>
+        </Tooltip>
+      </Box>
+
+      {/* Boolean Formula + Action buttons on same row */}
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
         <TextField
           fullWidth
           size="small"
-          label="Boolean Formula (Optional)"
+          label="Boolean Formula"
           placeholder="e.g., A || (B && C)"
           value={formula}
-          onChange={(e) => setFormula(e.target.value)}
+          onChange={(e) => { setFormula(e.target.value); setFormulaError(''); }}
           error={!!formulaError}
           helperText={
             formulaError ||
-            "Use A, B, C for conditions. Operators: && (AND), || (OR), ! (NOT), () for grouping"
+            "Use A, B, C... for conditions. Operators: && (AND), || (OR), ! (NOT)"
           }
           sx={{
+            flex: 1,
             '& .MuiInputBase-input': { fontSize: 12, fontFamily: 'monospace' },
             '& .MuiInputBase-input::placeholder': { fontSize: '11px', opacity: 0.6 },
             '& .MuiFormHelperText-root': { fontSize: 10 },
             '& .MuiInputLabel-root': { fontSize: 12 },
           }}
         />
+
+        {/* Apply and Clear buttons next to formula */}
+        <Tooltip title="Run Filter">
+          <span>
+            <IconButton
+              size="small"
+              onClick={handleApply}
+              disabled={!isValid}
+              sx={{
+                mt: 0.5,
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                borderRadius: 1,
+                p: 0.75,
+                '&:hover': { bgcolor: 'primary.dark' },
+                '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' },
+              }}
+            >
+              <PlayArrowIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip title="Clear Filter">
+          <span>
+            <IconButton
+              size="small"
+              onClick={handleClear}
+              disabled={!isValid}
+              sx={{ mt: 0.5, borderRadius: 1, p: 0.75 }}
+            >
+              <ClearIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
       </Box>
 
       {/* Formula Error Alert */}
       {formulaError && (
-        <Alert severity="error" sx={{ mb: 2, fontSize: 12 }}>
+        <Alert severity="error" sx={{ mt: 1, fontSize: 12, py: 0 }}>
           {formulaError}
         </Alert>
       )}
 
-      {/* Action Buttons */}
-      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<AddIcon />}
-          onClick={handleAddCondition}
-          sx={{ height: 28, fontSize: 12 }}
-        >
-          Add Condition
-        </Button>
-
-        <Box sx={{ flex: 1 }} />
-
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={handleApply}
-          disabled={!isValid}
-          sx={{ height: 28, fontSize: 12 }}
-        >
-          Apply Filter
-        </Button>
-
-        <Button
-          variant="outlined"
-          color="secondary"
-          size="small"
-          onClick={handleClear}
-          sx={{ height: 28, fontSize: 12 }}
-        >
-          Clear
-        </Button>
+      {/* Help note */}
+      <Box sx={{
+        mt: 1.5, p: 1, bgcolor: 'action.hover', borderRadius: 1,
+        display: 'flex', gap: 1, alignItems: 'flex-start',
+      }}>
+        <InfoOutlinedIcon sx={{ fontSize: 14, mt: 0.25, color: 'text.secondary', flexShrink: 0 }} />
+        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10, lineHeight: 1.5 }}>
+          Each condition (A, B, C...) filters rows by column value.
+          Without a formula, conditions combine with AND.
+          Use a boolean formula like{' '}
+          <code style={{ fontSize: 10, background: 'rgba(0,0,0,0.06)', padding: '1px 3px', borderRadius: 2 }}>
+            A || (B &amp;&amp; !C)
+          </code>{' '}
+          for custom logic. Matching rows expand their entire group.
+        </Typography>
       </Box>
-
-      {/* Helper text */}
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', fontSize: 11 }}>
-        Build filters visually. Use AND/OR connectors or enter a custom boolean formula above.
-      </Typography>
     </Box>
   );
 };
