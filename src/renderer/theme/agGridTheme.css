@@ -23,6 +23,9 @@
   --ag-row-border-color: #F1F3F5;
   --ag-secondary-border-color: #D1D5DB;
 
+  /* Column separators - make visible */
+  --ag-column-border: solid 1px #E5E7EB;
+
   /* Interactive states */
   --ag-row-hover-color: #F3F4F6;
   --ag-selected-row-background-color: #EBF4FF;
@@ -32,58 +35,30 @@
   --ag-checkbox-checked-color: #2D7FF9;
   --ag-input-focus-border-color: #2D7FF9;
 
-  /* Typography */
+  /* Typography - smaller font */
   --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --ag-font-size: 14px;
-  --ag-header-font-size: 14px;
+  --ag-font-size: 12px;
+  --ag-header-font-size: 12px;
   --ag-header-font-weight: 600;
 
-  /* Spacing */
-  --ag-grid-size: 4px;
-  --ag-row-height: 40px;
-  --ag-header-height: 44px;
-  --ag-cell-horizontal-padding: 12px;
+  /* Spacing - compact */
+  --ag-grid-size: 3px;
+  --ag-row-height: 28px;
+  --ag-header-height: 32px;
+  --ag-cell-horizontal-padding: 8px;
 
   /* Tree indentation */
-  --ag-row-group-indent-size: 24px;
+  --ag-row-group-indent-size: 20px;
 
   /* Borders and radius */
   --ag-borders: solid 1px;
   --ag-border-radius: 6px;
 
   /* Icons */
-  --ag-icon-size: 16px;
+  --ag-icon-size: 14px;
 
-  /* Shadows - subtle elevation */
+  /* Shadows */
   --ag-card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-/* Header vertical alignment */
-.ag-theme-tvm-light .ag-header-cell,
-.ag-theme-tvm-light .ag-header-group-cell {
-  display: flex;
-  align-items: center;
-}
-
-.ag-theme-tvm-light .ag-header-cell-label {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-/* Column resize handle/separator */
-.ag-theme-tvm-light .ag-header-cell-resize,
-.ag-theme-tvm-dark .ag-header-cell-resize {
-  background-color: var(--ag-border-color);
-  width: 1px;
-  opacity: 0.5;
-}
-
-.ag-theme-tvm-light .ag-header-cell-resize:hover,
-.ag-theme-tvm-dark .ag-header-cell-resize:hover {
-  opacity: 1;
-  background-color: var(--ag-input-focus-border-color);
-  width: 2px;
 }
 
 /* ============================================================================
@@ -104,6 +79,9 @@
   --ag-row-border-color: #1F2631;
   --ag-secondary-border-color: #374151;
 
+  /* Column separators - make visible */
+  --ag-column-border: solid 1px #374151;
+
   /* Interactive states */
   --ag-row-hover-color: #1F2937;
   --ag-selected-row-background-color: #1E3A5F;
@@ -113,29 +91,29 @@
   --ag-checkbox-checked-color: #5C9FFA;
   --ag-input-focus-border-color: #5C9FFA;
 
-  /* Typography */
+  /* Typography - smaller font */
   --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --ag-font-size: 14px;
-  --ag-header-font-size: 14px;
+  --ag-font-size: 12px;
+  --ag-header-font-size: 12px;
   --ag-header-font-weight: 600;
 
-  /* Spacing */
-  --ag-grid-size: 4px;
-  --ag-row-height: 40px;
-  --ag-header-height: 44px;
-  --ag-cell-horizontal-padding: 12px;
+  /* Spacing - compact */
+  --ag-grid-size: 3px;
+  --ag-row-height: 28px;
+  --ag-header-height: 32px;
+  --ag-cell-horizontal-padding: 8px;
 
   /* Tree indentation */
-  --ag-row-group-indent-size: 24px;
+  --ag-row-group-indent-size: 20px;
 
   /* Borders and radius */
   --ag-borders: solid 1px;
   --ag-border-radius: 6px;
 
   /* Icons */
-  --ag-icon-size: 16px;
+  --ag-icon-size: 14px;
 
-  /* Shadows - subtle elevation */
+  /* Shadows */
   --ag-card-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -151,7 +129,7 @@
 
 .ag-theme-tvm-light .ag-header-cell,
 .ag-theme-tvm-dark .ag-header-cell {
-  padding: 8px 12px;
+  padding: 4px 8px;
   display: flex;
   align-items: center;
 }
@@ -165,6 +143,43 @@
   height: 100%;
 }
 
+/* Column resize handle/separator - stable width to prevent header blink */
+.ag-theme-tvm-light .ag-header-cell-resize,
+.ag-theme-tvm-dark .ag-header-cell-resize {
+  background-color: var(--ag-border-color);
+  width: 2px;
+  opacity: 0.5;
+}
+
+.ag-theme-tvm-light .ag-header-cell-resize:hover,
+.ag-theme-tvm-dark .ag-header-cell-resize:hover {
+  opacity: 1;
+  background-color: var(--ag-input-focus-border-color);
+}
+
+/* Floating filter row styling */
+.ag-theme-tvm-light .ag-floating-filter,
+.ag-theme-tvm-dark .ag-floating-filter {
+  border-bottom: 1px solid var(--ag-border-color);
+}
+
+.ag-theme-tvm-light .ag-floating-filter-input,
+.ag-theme-tvm-dark .ag-floating-filter-input {
+  font-size: 11px;
+}
+
+/* Column header menu button */
+.ag-theme-tvm-light .ag-header-cell-menu-button,
+.ag-theme-tvm-dark .ag-header-cell-menu-button {
+  opacity: 0.5;
+  transition: opacity 100ms ease;
+}
+
+.ag-theme-tvm-light .ag-header-cell-menu-button:hover,
+.ag-theme-tvm-dark .ag-header-cell-menu-button:hover {
+  opacity: 1;
+}
+
 /* ============================================================================
    ROW STYLING
    ============================================================================ */
@@ -172,12 +187,12 @@
 .ag-theme-tvm-light .ag-row,
 .ag-theme-tvm-dark .ag-row {
   border-bottom: 1px solid var(--ag-row-border-color);
+  transition: background-color 100ms ease;
 }
 
 .ag-theme-tvm-light .ag-row:hover,
 .ag-theme-tvm-dark .ag-row:hover {
   background-color: var(--ag-row-hover-color) !important;
-  transition: background-color 150ms ease;
 }
 
 .ag-theme-tvm-light .ag-row-selected,
@@ -191,10 +206,18 @@
 
 .ag-theme-tvm-light .ag-cell,
 .ag-theme-tvm-dark .ag-cell {
-  padding: 8px 12px;
-  line-height: 1.5;
+  padding: 2px 8px;
+  line-height: 1.4;
   display: flex;
   align-items: center;
+  font-size: 12px;
+  border-right: var(--ag-column-border);
+}
+
+/* Remove right border on last cell */
+.ag-theme-tvm-light .ag-cell:last-child,
+.ag-theme-tvm-dark .ag-cell:last-child {
+  border-right: none;
 }
 
 /* Monospace font for data values (voltage columns) */
@@ -203,9 +226,16 @@
 .ag-theme-tvm-dark .ag-cell[col-id="Vnet1"],
 .ag-theme-tvm-dark .ag-cell[col-id="Vnet2"] {
   font-family: "JetBrains Mono", "Fira Code", "Consolas", "Monaco", monospace;
-  font-size: 13px;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
+}
+
+/* Net column monospace */
+.ag-theme-tvm-light .ag-cell[col-id="Net"],
+.ag-theme-tvm-dark .ag-cell[col-id="Net"] {
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", "Monaco", monospace;
+  font-size: 11px;
 }
 
 /* ============================================================================
@@ -216,7 +246,7 @@
 .ag-theme-tvm-light .ag-group-expanded,
 .ag-theme-tvm-dark .ag-group-contracted,
 .ag-theme-tvm-dark .ag-group-expanded {
-  margin-right: 8px;
+  margin-right: 6px;
   transition: transform 150ms ease;
 }
 
@@ -225,7 +255,6 @@
   transform: rotate(90deg);
 }
 
-/* Tree vertical lines - connecting child nodes */
 .ag-theme-tvm-light .ag-row-group-indent,
 .ag-theme-tvm-dark .ag-row-group-indent {
   position: relative;
@@ -251,12 +280,6 @@
   background-color: #2A303D;
 }
 
-/* Depth indicator bar for tree hierarchy */
-.ag-theme-tvm-light .ag-row[row-index] .ag-cell-wrapper,
-.ag-theme-tvm-dark .ag-row[row-index] .ag-cell-wrapper {
-  position: relative;
-}
-
 /* ============================================================================
    FOCUS & SELECTION STATES
    ============================================================================ */
@@ -273,7 +296,7 @@
 }
 
 /* ============================================================================
-   FILTER PANEL STYLING
+   FILTER PANEL STYLING (native AG Grid filters)
    ============================================================================ */
 
 .ag-theme-tvm-light .ag-filter,
@@ -286,7 +309,7 @@
 
 .ag-theme-tvm-light .ag-filter-apply-panel,
 .ag-theme-tvm-dark .ag-filter-apply-panel {
-  padding: 12px;
+  padding: 8px;
   border-top: 1px solid var(--ag-border-color);
 }
 
@@ -349,8 +372,7 @@
    LOADING OVERLAY
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-overlay-loading-wrapper,
-.ag-theme-tvm-dark .ag-overlay-loading-wrapper {
+.ag-theme-tvm-light .ag-overlay-loading-wrapper {
   background-color: rgba(255, 255, 255, 0.95);
 }
 
@@ -370,7 +392,7 @@
 .ag-theme-tvm-light .ag-overlay-no-rows-center,
 .ag-theme-tvm-dark .ag-overlay-no-rows-center {
   color: var(--ag-foreground-color);
-  font-size: 14px;
+  font-size: 12px;
 }
 
 /* ============================================================================
@@ -401,13 +423,12 @@
 
 .ag-theme-tvm-light,
 .ag-theme-tvm-dark {
-  /* Enable GPU acceleration for smooth scrolling */
+  /* GPU acceleration without will-change to avoid header repaint issues */
   transform: translateZ(0);
-  will-change: transform;
 }
 
-.ag-theme-tvm-light .ag-row,
-.ag-theme-tvm-dark .ag-row {
-  /* Smooth transitions for hover states */
-  transition: background-color 150ms ease;
+/* Prevent header blink on resize interaction */
+.ag-theme-tvm-light .ag-header-cell,
+.ag-theme-tvm-dark .ag-header-cell {
+  transition: none;
 }
