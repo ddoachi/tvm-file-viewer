@@ -7,12 +7,15 @@
     "email": "support@bh.company"
   },
   "homepage": "https://github.com/bh-support/total-voltage-manager",
-  "type": "module",
   "main": "out/main/index.js",
   "scripts": {
-    "dev": "ELECTRON_DISABLE_SANDBOX=1 electron-vite dev",
-    "build": "electron-vite build",
-    "typecheck": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "build:main": "tsup",
+    "build:renderer": "vite build --config vite.config.ts",
+    "build": "tsup && vite build --config vite.config.ts",
+    "dev": ". ./.env 2>/dev/null; . ./.env.development 2>/dev/null; tsup && (vite --config vite.config.ts --mode development & VITE_PID=$!; sleep 1; ELECTRON_DISABLE_SANDBOX=${ELECTRON_DISABLE_SANDBOX:-1} ${ELECTRON_PATH:-./node_modules/electron/dist/electron} .; kill $VITE_PID 2>/dev/null)",
+    "start": ". ./.env 2>/dev/null; ELECTRON_DISABLE_SANDBOX=${ELECTRON_DISABLE_SANDBOX:-1} ${ELECTRON_PATH:-./node_modules/electron/dist/electron} .",
+    "dev:renderer": "vite --config vite.config.ts",
+    "typecheck": "tsc -b",
     "lint": "eslint . --ext .ts,.tsx",
     "test": "npx tsx tests/services.test.ts",
     "test:e2e": "playwright test",
@@ -27,6 +30,7 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "ag-grid-community": "32.3.3",
+    "ag-grid-enterprise": "^32.3.3",
     "ag-grid-react": "32.3.3",
     "papaparse": "^5.5.0",
     "react": "^19.0.0",
@@ -41,8 +45,8 @@
     "@vitejs/plugin-react": "^4.3.0",
     "electron": "^33.3.0",
     "electron-builder": "^26.8.1",
-    "electron-vite": "^3.0.0",
     "playwright": "^1.58.2",
+    "tsup": "^8.5.1",
     "typescript": "^5.7.0"
   }
 }

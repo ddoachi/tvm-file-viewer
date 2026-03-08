@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Tabs, Tab, IconButton } from '@mui/material';
+import { Box, Tabs, Tab, IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useAppStore } from '../store/appStore';
 import { useCsvImport } from '../hooks/useCsvImport';
 import { colors } from '../theme/designSystem';
@@ -9,7 +10,7 @@ import { colors } from '../theme/designSystem';
 export const FileTabs: React.FC = () => {
   const { openFiles, activeFileId, setActiveFile, removeFile, themeMode } = useAppStore();
   const { importCsv } = useCsvImport();
-  const [confirmingClose, setConfirmingClose] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number; filePath: string } | null>(null);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setActiveFile(newValue);
@@ -17,15 +18,32 @@ export const FileTabs: React.FC = () => {
 
   const handleCloseTab = (fileId: string, fileName: string, event: React.MouseEvent) => {
     event.stopPropagation();
-
-    // Show confirmation dialog
     const confirmed = window.confirm(
       `Close ${fileName}? Unsaved changes will be lost.`
     );
-
     if (confirmed) {
       removeFile(fileId);
     }
+  };
+
+  const handleContextMenu = (event: React.MouseEvent, filePath: string) => {
+    event.preventDefault();
+    setContextMenu({ mouseX: event.clientX, mouseY: event.clientY, filePath });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleOpenInGvim = async () => {
+    if (contextMenu?.filePath && window.electronAPI) {
+      try {
+        await window.electronAPI.openInEditor(contextMenu.filePath);
+      } catch (err) {
+        console.error('Failed to open in editor:', err);
+      }
+    }
+    handleCloseContextMenu();
   };
 
   const handleAddFile = () => {
@@ -40,7 +58,7 @@ export const FileTabs: React.FC = () => {
     <Box
       sx={{
         borderBottom: 1,
-        borderColor: themeMode === 'light' ? colors.light.border.primary : colors.dark.border.primary,
+        borderColor: themeMode === 'light' ? colors.light.border.default : colors.dark.border.default,
         bgcolor: themeMode === 'light' ? colors.light.bg.secondary : colors.dark.bg.secondary,
         px: 2,
         display: 'flex',
@@ -69,6 +87,7 @@ export const FileTabs: React.FC = () => {
           <Tab
             key={file.id}
             value={file.id}
+            onContextMenu={(e) => handleContextMenu(e, file.filePath)}
             label={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <span>{file.fileName}</span>
@@ -107,6 +126,18 @@ export const FileTabs: React.FC = () => {
       >
         <AddIcon sx={{ fontSize: 18 }} />
       </IconButton>
+
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={contextMenu ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+      >
+        <MenuItem onClick={handleOpenInGvim} sx={{ fontSize: 13 }}>
+          <ListItemIcon><OpenInNewIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Open with gVim</ListItemText>
+        </MenuItem>
+      </Menu>
     </Box>
   );
 };

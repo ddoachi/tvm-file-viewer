@@ -4,6 +4,7 @@ import type { CsvRow, FilterResult } from '../types';
 export interface OpenFile {
   id: string;
   fileName: string;
+  filePath: string;
   rows: CsvRow[];
 }
 
@@ -12,75 +13,112 @@ interface AppState {
   activeFileId: string | null;
   parseErrors: string[];
   isLoading: boolean;
-  filterResult: FilterResult | null;
+  isFiltering: boolean;
+  filterResults: Record<string, FilterResult>; // per-file filter results
   searchText: string;
   themeMode: 'light' | 'dark';
+  gridFilteredCount: number | null;
   addFile: (file: OpenFile) => void;
   removeFile: (fileId: string) => void;
   setActiveFile: (fileId: string) => void;
   setParseErrors: (errors: string[]) => void;
   setLoading: (loading: boolean) => void;
+  setFiltering: (filtering: boolean) => void;
   setFilterResult: (result: FilterResult | null) => void;
   setSearchText: (text: string) => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
+  setGridFilteredCount: (count: number | null) => void;
+  renameFile: (fileId: string, newName: string) => void;
   reset: () => void;
 }
+
+// Selector to get filterResult for active file
+export const selectFilterResult = (state: AppState): FilterResult | null => {
+  const id = state.activeFileId;
+  return id ? (state.filterResults[id] ?? null) : null;
+};
 
 export const useAppStore = create<AppState>((set) => ({
   openFiles: [],
   activeFileId: null,
   parseErrors: [],
   isLoading: false,
-  filterResult: null,
+  isFiltering: false,
+  filterResults: {},
   searchText: '',
   themeMode: 'light',
+  gridFilteredCount: null,
 
   addFile: (file) => set((state) => ({
     openFiles: [...state.openFiles, file],
     activeFileId: file.id,
     parseErrors: [],
+    gridFilteredCount: null,
   })),
 
   removeFile: (fileId) => set((state) => {
     const newFiles = state.openFiles.filter(f => f.id !== fileId);
     let newActiveId = state.activeFileId;
 
-    // If removing active file, switch to another
     if (state.activeFileId === fileId) {
       if (newFiles.length > 0) {
         const removedIndex = state.openFiles.findIndex(f => f.id === fileId);
-        // Try to activate the next file, or previous if it was the last
         newActiveId = newFiles[Math.min(removedIndex, newFiles.length - 1)]?.id || null;
       } else {
         newActiveId = null;
       }
     }
 
+    const { [fileId]: _, ...remainingResults } = state.filterResults;
+
     return {
       openFiles: newFiles,
       activeFileId: newActiveId,
+      filterResults: remainingResults,
+      gridFilteredCount: null,
     };
   }),
 
-  setActiveFile: (fileId) => set({ activeFileId: fileId }),
+  setActiveFile: (fileId) => set({ activeFileId: fileId, gridFilteredCount: null }),
 
   setParseErrors: (errors) => set({ parseErrors: errors }),
 
   setLoading: (loading) => set({ isLoading: loading }),
 
-  setFilterResult: (result) => set({ filterResult: result }),
+  setFiltering: (filtering) => set({ isFiltering: filtering }),
+
+  setFilterResult: (result) => set((state) => {
+    const id = state.activeFileId;
+    if (!id) return {};
+    if (result) {
+      return { filterResults: { ...state.filterResults, [id]: result } };
+    } else {
+      const { [id]: _, ...rest } = state.filterResults;
+      return { filterResults: rest };
+    }
+  }),
 
   setSearchText: (text) => set({ searchText: text }),
 
   setThemeMode: (mode) => set({ themeMode: mode }),
+
+  setGridFilteredCount: (count) => set({ gridFilteredCount: count }),
+
+  renameFile: (fileId, newName) => set((state) => ({
+    openFiles: state.openFiles.map(f =>
+      f.id === fileId ? { ...f, fileName: newName } : f
+    ),
+  })),
 
   reset: () => set({
     openFiles: [],
     activeFileId: null,
     parseErrors: [],
     isLoading: false,
-    filterResult: null,
+    isFiltering: false,
+    filterResults: {},
     searchText: '',
-    themeMode: 'light'
+    themeMode: 'light',
+    gridFilteredCount: null,
   }),
 }));

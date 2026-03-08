@@ -1,6 +1,13 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, CircularProgress, IconButton } from '@mui/material';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useCsvImport } from '../hooks/useCsvImport';
@@ -8,7 +15,7 @@ import { useAppStore } from '../store/appStore';
 
 export function AppHeader() {
   const { importCsv, isLoading } = useCsvImport();
-  const { fileName, themeMode, setThemeMode } = useAppStore();
+  const { themeMode, setThemeMode } = useAppStore();
 
   const handleThemeToggle = () => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
@@ -21,36 +28,33 @@ export function AppHeader() {
           Total Voltage Manager
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{
-            marginRight: 2,
-            color: 'rgba(255, 255, 255, 0.7)',
-          }}
-        >
-          {fileName || 'No file loaded'}
-        </Typography>
-
         <IconButton
           onClick={handleThemeToggle}
           color="inherit"
           size="small"
-          sx={{ marginRight: 1 }}
+          sx={{
+            marginRight: 1,
+            transition: 'background-color 0.15s',
+            '&:hover': { bgcolor: 'rgba(255,255,255,0.15)' },
+          }}
         >
           {themeMode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
         </IconButton>
 
-        <Button
-          variant="contained"
-          color="secondary"
-          size="small"
-          startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <FileUploadIcon />}
-          onClick={importCsv}
-          disabled={isLoading}
-          sx={{ minWidth: 80 }}
-        >
-          {isLoading ? 'Importing...' : 'Import'}
-        </Button>
+        <Tooltip title="Import File">
+          <IconButton
+            color="inherit"
+            size="small"
+            onClick={importCsv}
+            disabled={isLoading}
+            sx={{
+              transition: 'background-color 0.15s',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.15)' },
+            }}
+          >
+            {isLoading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </AppBar>
   );

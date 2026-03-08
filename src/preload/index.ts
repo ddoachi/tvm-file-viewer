@@ -10,4 +10,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onRowClick: (rowData: any): Promise<void> => {
     return ipcRenderer.invoke('row:clicked', rowData);
   },
+  openInEditor: (filePath: string): Promise<void> => {
+    return ipcRenderer.invoke('file:openInEditor', filePath);
+  },
 });

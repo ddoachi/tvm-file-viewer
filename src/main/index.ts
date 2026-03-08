@@ -1,15 +1,16 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { spawn } from 'child_process';
 
 let mainWindow: BrowserWindow | null = null;
 
+// Performance: enable hardware acceleration
+app.commandLine.appendSwitch('enable-features', 'VaapiVideoDecoder');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+
 function createWindow() {
-  const preloadPath = path.join(__dirname, '../preload/index.mjs');
+  const preloadPath = path.join(__dirname, '../preload/index.js');
   console.log('Preload path:', preloadPath);
   console.log('Preload exists:', fs.existsSync(preloadPath));
 
@@ -17,17 +18,24 @@ function createWindow() {
     width: 1200,
     height: 800,
     title: 'Total Voltage Manager',
+    show: false, // Performance: show after ready-to-show
     webPreferences: {
       preload: preloadPath,
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false, // Disabled for Linux compatibility with preload scripts
+      sandbox: false,
+      backgroundThrottling: false,
     },
+  });
+
+  // Show window when ready (faster perceived startup)
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show();
   });
 
   mainWindow.setMenu(null);
 
-  // Open DevTools in development or with F12
+  // Open DevTools in development
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
   }
@@ -103,4 +111,15 @@ ipcMain.handle('file:read', async (_event, filePath: string) => {
 
 ipcMain.handle('row:clicked', (_event, rowData: unknown) => {
   console.log('Row clicked:', rowData);
+});
+
+ipcMain.handle('file:openInEditor', (_event, filePath: string) => {
+  const editorPath = process.env.EDITOR_PATH || 'gvim';
+  try {
+    const child = spawn(editorPath, [filePath], { detached: true, stdio: 'ignore' });
+    child.unref();
+  } catch (error) {
+    console.error('Failed to open editor:', error);
+    throw new Error(`Failed to open editor: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 });

@@ -1,146 +1,121 @@
-import React, { useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, IRowNode, RowClickedEvent } from 'ag-grid-community';
-import { useAppStore } from '../store/appStore';
+import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent } from 'ag-grid-community';
+import 'ag-grid-enterprise';
+import { Box, CircularProgress, Chip } from '@mui/material';
+import { useAppStore, selectFilterResult } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
-import { NetCellRenderer } from './NetCellRenderer';
-import { colors, typography } from '../theme/designSystem';
 
 export const DataGrid: React.FC = () => {
-  const { openFiles, activeFileId, filterResult, searchText, themeMode } = useAppStore();
+  const { openFiles, activeFileId, searchText, themeMode, isLoading, isFiltering, setGridFilteredCount } = useAppStore();
+  const filterResult = useAppStore(selectFilterResult);
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
 
-  // Get rows from active file
   const activeFile = openFiles.find(f => f.id === activeFileId);
-  const rows = activeFile?.rows || [];
+  const allRows = activeFile?.rows || [];
 
-  // Calculate tree depth for indentation
-  const getTreeDepth = useCallback((row: CsvRow): number => {
-    let depth = 0;
-    let current = row;
-    const rowMap = new Map(rows.map(r => [r.id, r]));
+  // Filter rowData directly — show only rows matching the filter
+  const rows = useMemo(() => {
+    if (!filterResult) return allRows;
+    return allRows.filter(row => filterResult.visibleRowIndices.has(row._rowIndex));
+  }, [allRows, filterResult]);
 
-    while (current.parentId) {
-      depth++;
-      const parent = rowMap.get(current.parentId);
-      if (!parent) break;
-      current = parent;
-    }
-    return depth;
-  }, [rows]);
+  const totalCount = allRows.length;
+  const matchedCount = filterResult ? filterResult.directMatches.size : 0;
 
-  // Column definitions with Net column showing tree hierarchy
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
-    {
-      field: 'Net',
-      headerName: 'Net',
-      flex: 2,
-      sortable: true,
-      resizable: true,
-      cellRenderer: NetCellRenderer,
-      cellRendererParams: {
-        getTreeDepth,
-      },
-    },
-    {
-      field: 'Group',
-      headerName: 'Group',
-      flex: 1,
-      sortable: true,
-      resizable: true,
-    },
-    {
-      field: 'Vnet1',
-      headerName: 'Vnet1',
-      flex: 1,
-      sortable: true,
-      resizable: true,
-    },
-    {
-      field: 'Vnet2',
-      headerName: 'Vnet2',
-      flex: 1,
-      sortable: true,
-      resizable: true,
-    },
+    { field: 'Group', headerName: 'Group', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'Vnet1', headerName: 'Vnet1', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'Vnet2', headerName: 'Vnet2', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
   ], []);
 
-  // Default column definition
-  const defaultColDef = useMemo<ColDef>(() => ({
-    sortable: true,
-    resizable: true,
-    flex: 1,
-    filter: true,
-  }), []);
-
-  // Auto group column definition for tree display
   const autoGroupColumnDef = useMemo<ColDef>(() => ({
     headerName: 'Net',
-    minWidth: 300,
-    cellRendererParams: {
-      suppressCount: false,
-    },
+    flex: 2,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    resizable: true,
+    cellRendererParams: { suppressCount: true },
   }), []);
 
-  // Data type definitions for tree structure
-  const dataTypeDefinitions = useMemo(() => ({
-    object: {
-      baseDataType: 'object' as const,
-      extendsDataType: 'object' as const,
-    },
+  const defaultColDef = useMemo<ColDef>(() => ({
+    sortable: true, resizable: true, flex: 1, filter: true, suppressHeaderMenuButton: false,
   }), []);
 
-  // External filter callbacks
-  const isExternalFilterPresent = useCallback(() => {
-    return filterResult !== null;
-  }, [filterResult]);
+  const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => data.Net.split('.'), []);
 
-  const doesExternalFilterPass = useCallback(
-    (node: IRowNode<CsvRow>) => {
-      if (!filterResult || !node.data) {
-        return true;
-      }
-      return filterResult.visibleRowIndices.has(node.data._rowIndex);
-    },
-    [filterResult]
-  );
-
-  // Row click handler for crossprobing
   const handleRowClick = useCallback((event: RowClickedEvent<CsvRow>) => {
     if (event.data && window.electronAPI) {
       window.electronAPI.onRowClick(event.data);
     }
   }, []);
 
+  const handleFilterChanged = useCallback((_event: FilterChangedEvent<CsvRow>) => {
+    const api = gridRef.current?.api;
+    if (!api) return;
+    let count = 0;
+    api.forEachNodeAfterFilter(() => { count++; });
+    setGridFilteredCount(count < rows.length ? count : null);
+  }, [rows.length, setGridFilteredCount]);
+
+  // Clear AG Grid column filters when switching tabs
+  useEffect(() => {
+    const api = gridRef.current?.api;
+    if (api) {
+      api.setFilterModel(null);
+    }
+  }, [activeFileId]);
+
+  const isBusy = isLoading || isFiltering;
+  const themeClass = themeMode === 'light'
+    ? 'ag-theme-quartz ag-theme-tvm-light'
+    : 'ag-theme-quartz-dark ag-theme-tvm-dark';
+
   return (
-    <>
-      <FilterPanel gridRef={gridRef} />
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, gap: 0.5 }}>
+      <FilterPanel disabled={isBusy} />
+
       <div
-        className={themeMode === 'light' ? 'ag-theme-tvm-light' : 'ag-theme-tvm-dark'}
-        style={{
-          height: '100%',
-          width: '100%',
-        }}
+        className={themeClass}
+        style={{ flex: '1 1 0', width: '100%', position: 'relative', overflow: 'hidden' }}
       >
+        {isBusy && (
+          <Box sx={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            bgcolor: 'rgba(255,255,255,0.7)', zIndex: 10,
+          }}>
+            <CircularProgress />
+          </Box>
+        )}
         <AgGridReact<CsvRow>
           ref={gridRef}
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
-          animateRows={true}
+          treeData={true}
+          getDataPath={getDataPath}
+          autoGroupColumnDef={autoGroupColumnDef}
+          groupDefaultExpanded={0}
+          rowHeight={28}
+          headerHeight={32}
+          floatingFiltersHeight={28}
+          animateRows={false}
           quickFilterText={searchText}
-          isExternalFilterPresent={isExternalFilterPresent}
-          doesExternalFilterPass={doesExternalFilterPass}
           onRowClicked={handleRowClick}
+          onFilterChanged={handleFilterChanged}
+          rowBuffer={20}
+          suppressColumnVirtualisation={false}
           overlayNoRowsTemplate={
-            '<div style="padding: 40px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: ' + colors.light.text.secondary + ';">' +
-            '<p style="font-family: ' + typography.fontFamily.sans + '; font-size: ' + typography.fontSize.base + '; font-weight: ' + typography.fontWeight.medium + '; margin: 0; color: ' + colors.light.text.primary + ';">No data loaded</p>' +
-            '<p style="font-family: ' + typography.fontFamily.sans + '; font-size: ' + typography.fontSize.sm + '; margin-top: 8px; color: ' + colors.light.text.secondary + ';">Click "Import" to load a CSV or JSON file</p>' +
+            '<div style="padding: 40px 20px; text-align: center; color: #6B7280;">' +
+            '<p style="font-size: 13px; font-weight: 500; margin: 0; color: #1F2937;">No data loaded</p>' +
+            '<p style="font-size: 12px; margin-top: 8px;">Click the import icon to load a CSV or JSON file</p>' +
             '</div>'
           }
         />
       </div>
-    </>
+    </Box>
   );
 };
