@@ -123,3 +123,42 @@ ipcMain.handle('file:openInEditor', (_event, filePath: string) => {
     throw new Error(`Failed to open editor: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 });
+
+// File watching for reload detection
+const fileWatchers = new Map<string, fs.FSWatcher>();
+
+ipcMain.handle('file:watch', (_event, filePath: string) => {
+  if (fileWatchers.has(filePath)) return;
+
+  try {
+    let debounceTimer: NodeJS.Timeout | null = null;
+    const watcher = fs.watch(filePath, (eventType) => {
+      if (eventType === 'change') {
+        // Debounce: editors may trigger multiple change events
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          mainWindow?.webContents.send('file:changed', filePath);
+        }, 300);
+      }
+    });
+    fileWatchers.set(filePath, watcher);
+  } catch (error) {
+    console.error('Failed to watch file:', error);
+  }
+});
+
+ipcMain.handle('file:unwatch', (_event, filePath: string) => {
+  const watcher = fileWatchers.get(filePath);
+  if (watcher) {
+    watcher.close();
+    fileWatchers.delete(filePath);
+  }
+});
+
+// Clean up all watchers on quit
+app.on('before-quit', () => {
+  for (const watcher of fileWatchers.values()) {
+    watcher.close();
+  }
+  fileWatchers.clear();
+});
