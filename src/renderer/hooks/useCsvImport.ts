@@ -1,80 +1,63 @@
+import { useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { parseCsv } from '../services/csvParser';
 import { parseJson } from '../services/jsonParser';
 import { computeTreePaths } from '../services/treeTransformer';
 
+async function loadFileContent(filePath: string): Promise<import('../types').CsvRow[]> {
+  const content = await window.electronAPI.readFile(filePath);
+  const fileExtension = filePath.split('.').pop()?.toLowerCase();
+
+  let parseResult;
+  if (fileExtension === 'json') {
+    parseResult = parseJson(content);
+  } else {
+    parseResult = parseCsv(content);
+  }
+
+  if (parseResult.errors.length > 0) {
+    console.warn('Parse errors during reload:', parseResult.errors);
+  }
+
+  return fileExtension === 'csv'
+    ? computeTreePaths(parseResult.rows)
+    : parseResult.rows;
+}
+
 export function useCsvImport() {
-  const { addFile, setParseErrors, setLoading, isLoading } = useAppStore();
+  const { addFile, updateFileRows, setParseErrors, setLoading, isLoading, openFiles } = useAppStore();
 
   const importCsv = async () => {
     try {
-      // Check if Electron API is available
       if (!window.electronAPI) {
         throw new Error('Electron API not available. Please restart the application.');
       }
 
       setParseErrors([]);
 
-      // Open file dialog (no spinner yet — user hasn't picked a file)
       const filePath = await window.electronAPI.openFileDialog();
 
       if (!filePath) {
         return;
       }
 
-      // File selected — now show loading spinner
       setLoading(true);
 
-      // Read file content
-      const content = await window.electronAPI.readFile(filePath);
+      const rows = await loadFileContent(filePath);
 
-      // Determine file type from extension
-      const fileExtension = filePath.split('.').pop()?.toLowerCase();
-
-      // Parse based on file type
-      let parseResult;
-      if (fileExtension === 'json') {
-        parseResult = parseJson(content);
-      } else {
-        // Default to CSV parsing
-        parseResult = parseCsv(content);
-      }
-
-      // Check for parse errors
-      if (parseResult.errors.length > 0) {
-        const errorMessages = parseResult.errors.map(
-          err => `Row ${err.row}: ${err.message}`
-        );
-        setParseErrors(errorMessages);
-      }
-
-      // Transform with parent-child relationships (only needed for CSV)
-      const rowsWithRelations = fileExtension === 'csv'
-        ? computeTreePaths(parseResult.rows)
-        : parseResult.rows;
-
-      // Extract filename from path
       const fileName = filePath.split(/[\\/]/).pop() || 'unknown';
-
-      // Generate unique file ID
       const fileId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      // Update store with new file
-      addFile({
-        id: fileId,
-        fileName,
-        filePath,
-        rows: rowsWithRelations,
-      });
+      addFile({ id: fileId, fileName, filePath, rows });
+
+      // Start watching the file for changes
+      window.electronAPI.watchFile(filePath);
 
     } catch (error) {
-      console.error('❌ CSV Import Error:', error);
-      console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack');
-
+      console.error('CSV Import Error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       setParseErrors([errorMessage]);
 
-      // Show alert for critical errors
       if (error instanceof Error) {
         alert(`Import failed: ${error.message}\n\nCheck DevTools Console (F12) for details.`);
       }
@@ -82,6 +65,33 @@ export function useCsvImport() {
       setLoading(false);
     }
   };
+
+  // Listen for file change events from main process and reload
+  useEffect(() => {
+    if (!window.electronAPI) return;
+
+    const cleanup = window.electronAPI.onFileChanged(async (filePath: string) => {
+      try {
+        const rows = await loadFileContent(filePath);
+        updateFileRows(filePath, rows);
+      } catch (error) {
+        console.error('File reload error:', error);
+      }
+    });
+
+    return cleanup;
+  }, [updateFileRows]);
+
+  // Unwatch files when they are removed (cleanup)
+  useEffect(() => {
+    if (!window.electronAPI) return;
+
+    return () => {
+      for (const file of openFiles) {
+        window.electronAPI.unwatchFile(file.filePath);
+      }
+    };
+  }, [openFiles]);
 
   return {
     importCsv,

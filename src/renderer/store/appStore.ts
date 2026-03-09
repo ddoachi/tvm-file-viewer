@@ -28,6 +28,7 @@ interface AppState {
   setSearchText: (text: string) => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
   setGridFilteredCount: (count: number | null) => void;
+  updateFileRows: (filePath: string, rows: CsvRow[]) => void;
   renameFile: (fileId: string, newName: string) => void;
   reset: () => void;
 }
@@ -103,6 +104,12 @@ export const useAppStore = create<AppState>((set) => ({
   setThemeMode: (mode) => set({ themeMode: mode }),
 
   setGridFilteredCount: (count) => set({ gridFilteredCount: count }),
+
+  updateFileRows: (filePath, rows) => set((state) => ({
+    openFiles: state.openFiles.map(f =>
+      f.filePath === filePath ? { ...f, rows } : f
+    ),
+  })),
 
   renameFile: (fileId, newName) => set((state) => ({
     openFiles: state.openFiles.map(f =>

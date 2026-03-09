@@ -1,28 +1,81 @@
-import React, { useMemo, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent } from 'ag-grid-community';
-import 'ag-grid-enterprise';
-import { Box, CircularProgress, Chip } from '@mui/material';
+import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent, CellContextMenuEvent } from 'ag-grid-community';
+import { Box, CircularProgress, Snackbar, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useAppStore, selectFilterResult } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
+
+function formatRowForClipboard(row: CsvRow): string {
+  return `${row.Net}\t${row.Group}\t${row.Vnet1}\t${row.Vnet2}`;
+}
+
+function formatRowsForClipboard(rows: CsvRow[]): string {
+  const header = 'Net\tGroup\tVnet1\tVnet2';
+  const lines = rows.map(formatRowForClipboard);
+  return [header, ...lines].join('\n');
+}
 
 export const DataGrid: React.FC = () => {
   const { openFiles, activeFileId, searchText, themeMode, isLoading, isFiltering, setGridFilteredCount } = useAppStore();
   const filterResult = useAppStore(selectFilterResult);
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number } | null>(null);
+  const contextRowRef = useRef<CsvRow | null>(null);
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
   const allRows = activeFile?.rows || [];
 
-  // Filter rowData directly — show only rows matching the filter
+  // Filter rowData — show only rows matching the filter
   const rows = useMemo(() => {
     if (!filterResult) return allRows;
     return allRows.filter(row => filterResult.visibleRowIndices.has(row._rowIndex));
   }, [allRows, filterResult]);
 
-  const totalCount = allRows.length;
-  const matchedCount = filterResult ? filterResult.directMatches.size : 0;
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setSnackbarOpen(true);
+    } catch (err) {
+      console.error('Clipboard write failed:', err);
+    }
+  }, []);
+
+  // AG Grid cell right-click handler
+  const handleCellContextMenu = useCallback((event: CellContextMenuEvent<CsvRow>) => {
+    const browserEvent = event.event as MouseEvent;
+    if (!browserEvent) return;
+    browserEvent.preventDefault();
+    contextRowRef.current = event.data || null;
+    setContextMenu({ mouseX: browserEvent.clientX, mouseY: browserEvent.clientY });
+  }, []);
+
+  const handleCopyRows = useCallback(() => {
+    const api = gridRef.current?.api;
+    const selectedRows = api ? api.getSelectedRows() as CsvRow[] : [];
+
+    if (selectedRows.length > 1) {
+      copyToClipboard(formatRowsForClipboard(selectedRows));
+    } else if (contextRowRef.current) {
+      copyToClipboard(formatRowForClipboard(contextRowRef.current));
+    }
+    setContextMenu(null);
+  }, [copyToClipboard]);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  const getCopyLabel = useCallback((): string => {
+    const api = gridRef.current?.api;
+    const selectedRows = api ? api.getSelectedRows() : [];
+    if (selectedRows.length > 1) {
+      return `Copy ${selectedRows.length} Rows`;
+    }
+    return 'Copy Row';
+  }, []);
 
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
     { field: 'Group', headerName: 'Group', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
@@ -99,6 +152,8 @@ export const DataGrid: React.FC = () => {
           getDataPath={getDataPath}
           autoGroupColumnDef={autoGroupColumnDef}
           groupDefaultExpanded={0}
+          rowSelection="multiple"
+          suppressContextMenu={true}
           rowHeight={28}
           headerHeight={32}
           floatingFiltersHeight={28}
@@ -106,6 +161,7 @@ export const DataGrid: React.FC = () => {
           quickFilterText={searchText}
           onRowClicked={handleRowClick}
           onFilterChanged={handleFilterChanged}
+          onCellContextMenu={handleCellContextMenu}
           rowBuffer={20}
           suppressColumnVirtualisation={false}
           overlayNoRowsTemplate={
@@ -116,6 +172,27 @@ export const DataGrid: React.FC = () => {
           }
         />
       </div>
+
+      {/* Right-click context menu */}
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={contextMenu ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+      >
+        <MenuItem onClick={handleCopyRows} sx={{ fontSize: 13 }}>
+          <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>{contextMenu ? getCopyLabel() : 'Copy Row'}</ListItemText>
+        </MenuItem>
+      </Menu>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={1500}
+        onClose={() => setSnackbarOpen(false)}
+        message="Copied!"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </Box>
   );
 };

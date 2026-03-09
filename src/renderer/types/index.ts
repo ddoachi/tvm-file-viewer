@@ -3,6 +3,9 @@ export interface ElectronAPI {
   readFile(filePath: string): Promise<string>;
   onRowClick(rowData: any): Promise<void>;
   openInEditor(filePath: string): Promise<void>;
+  watchFile(filePath: string): Promise<void>;
+  unwatchFile(filePath: string): Promise<void>;
+  onFileChanged(callback: (filePath: string) => void): () => void;
 }
 
 declare global {
