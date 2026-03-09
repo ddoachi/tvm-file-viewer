@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent, IRowNode, GetContextMenuItemsParams, MenuItemDef } from 'ag-grid-community';
-import 'ag-grid-enterprise';
 import { Box, CircularProgress, Snackbar } from '@mui/material';
 import { useAppStore, selectFilterResult } from '../store/appStore';
 import type { CsvRow } from '../types';
@@ -181,6 +180,7 @@ export const DataGrid: React.FC = () => {
           isExternalFilterPresent={isExternalFilterPresent}
           doesExternalFilterPass={doesExternalFilterPass}
           getContextMenuItems={getContextMenuItems}
+          allowContextMenuWithControlKey={true}
           rowBuffer={20}
           suppressColumnVirtualisation={false}
           overlayNoRowsTemplate={
