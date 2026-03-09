@@ -100,23 +100,22 @@ export const DataGrid: React.FC = () => {
   const getContextMenuItems = useCallback((params: GetContextMenuItemsParams<CsvRow>): (string | MenuItemDef)[] => {
     const items: (string | MenuItemDef)[] = [];
 
-    // Copy single row
-    if (params.node?.data) {
+    const api = params.api;
+    const selectedRows = api.getSelectedRows() as CsvRow[];
+
+    if (selectedRows.length > 1) {
+      // Multiple rows selected: show bulk copy
+      items.push({
+        name: `Copy ${selectedRows.length} Rows`,
+        action: () => copyToClipboard(formatRowsForClipboard(selectedRows)),
+        icon: '<span style="font-size:14px">&#128203;</span>',
+      });
+    } else if (params.node?.data) {
+      // Single row: copy the right-clicked row
       const rowData = params.node.data;
       items.push({
         name: 'Copy Row',
         action: () => copyToClipboard(formatRowForClipboard(rowData)),
-        icon: '<span style="font-size:14px">&#128203;</span>',
-      });
-    }
-
-    // Copy selected rows
-    const api = params.api;
-    const selectedRows = api.getSelectedRows() as CsvRow[];
-    if (selectedRows.length > 1) {
-      items.push({
-        name: `Copy ${selectedRows.length} Selected Rows`,
-        action: () => copyToClipboard(formatRowsForClipboard(selectedRows)),
         icon: '<span style="font-size:14px">&#128203;</span>',
       });
     }

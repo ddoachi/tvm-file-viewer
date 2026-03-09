@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -26,6 +26,8 @@ interface FilterPanelProps {
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
   const { searchText, setSearchText, openFiles, activeFileId, setFilterResult, setFiltering } = useAppStore();
+  const lastExpressionRef = useRef<string | null>(null);
+  const prevRowsRef = useRef<CsvRow[]>([]);
 
   const rows = useMemo(() => {
     const activeFile = openFiles.find(f => f.id === activeFileId);
@@ -40,7 +42,17 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
     setSearchText('');
   };
 
+  // Auto re-apply filter when rows change (file reload)
+  useEffect(() => {
+    if (rows === prevRowsRef.current) return;
+    prevRowsRef.current = rows;
+    if (lastExpressionRef.current && rows.length > 0) {
+      handleVisualApply(lastExpressionRef.current);
+    }
+  });
+
   const handleVisualApply = useCallback((expression: string) => {
+    lastExpressionRef.current = expression;
     setFiltering(true);
 
     try {
@@ -82,6 +94,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
   }, [rows, setFilterResult, setFiltering]);
 
   const handleVisualClear = () => {
+    lastExpressionRef.current = null;
     setFilterResult(null);
   };
 

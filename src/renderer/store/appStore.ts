@@ -105,20 +105,11 @@ export const useAppStore = create<AppState>((set) => ({
 
   setGridFilteredCount: (count) => set({ gridFilteredCount: count }),
 
-  updateFileRows: (filePath, rows) => set((state) => {
-    const file = state.openFiles.find(f => f.filePath === filePath);
-    const newFilterResults = { ...state.filterResults };
-    // Clear stale filter for this file — conditions in FilterBuilder remain visible for re-run
-    if (file && newFilterResults[file.id]) {
-      delete newFilterResults[file.id];
-    }
-    return {
-      openFiles: state.openFiles.map(f =>
-        f.filePath === filePath ? { ...f, rows } : f
-      ),
-      filterResults: newFilterResults,
-    };
-  }),
+  updateFileRows: (filePath, rows) => set((state) => ({
+    openFiles: state.openFiles.map(f =>
+      f.filePath === filePath ? { ...f, rows } : f
+    ),
+  })),
 
   renameFile: (fileId, newName) => set((state) => ({
     openFiles: state.openFiles.map(f =>
