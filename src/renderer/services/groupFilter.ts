@@ -33,13 +33,20 @@ export function evaluateCondition(row: CsvRow, condition: FilterCondition): bool
 }
 
 /**
- * Row-level filtering: find all rows matching the conditions (AND by default),
- * or use a custom evaluate function for boolean formula support.
+ * Group-level filtering: evaluate each condition independently per row,
+ * then check at the Group level whether ALL conditions (or a boolean formula)
+ * are satisfied by at least one row each within that Group.
+ *
+ * Example: Vnet1=="VDD" && Vnet1=="VSS"
+ *   - For each Group, check: does this Group have >=1 row with Vnet1==VDD
+ *     AND >=1 row with Vnet1==VSS?
+ *   - If yes, show ALL rows in that Group.
  */
 export function applyGroupFilter(
   rows: CsvRow[],
   conditions: FilterCondition[],
-  evaluate?: (varMap: Map<string, boolean>) => boolean
+  evaluate?: (varMap: Map<string, boolean>) => boolean,
+  combineOperator?: 'AND' | 'OR'
 ): FilterResult {
   if (conditions.length === 0) {
     return {
@@ -49,31 +56,79 @@ export function applyGroupFilter(
     };
   }
 
-  const directMatches = new Set<number>();
-  const matchedGroups = new Set<string>();
+  // Phase 1: For each condition, find which Groups have matching rows
+  // and collect matching row indices per condition per Group
+  const conditionMatchesByGroup: Map<string, number[]>[] = conditions.map(condition => {
+    const groupMatches = new Map<string, number[]>();
+    for (const row of rows) {
+      if (evaluateCondition(row, condition)) {
+        const group = row.Group;
+        let indices = groupMatches.get(group);
+        if (!indices) {
+          indices = [];
+          groupMatches.set(group, indices);
+        }
+        indices.push(row._rowIndex);
+      }
+    }
+    return groupMatches;
+  });
 
-  for (const row of rows) {
-    let matched: boolean;
+  // Collect all Groups that have at least one match for any condition
+  const allGroups = new Set<string>();
+  for (const groupMatches of conditionMatchesByGroup) {
+    for (const group of groupMatches.keys()) {
+      allGroups.add(group);
+    }
+  }
+
+  // Phase 2: For each Group, evaluate formula/operator at Group level
+  const matchedGroups = new Set<string>();
+  const directMatches = new Set<number>();
+
+  for (const group of allGroups) {
+    let groupQualifies: boolean;
 
     if (evaluate) {
+      // Formula mode: each variable = "this Group has >=1 row matching this condition"
       const varMap = new Map<string, boolean>();
-      conditions.forEach((cond, i) => {
-        varMap.set(String.fromCharCode(65 + i), evaluateCondition(row, cond));
+      conditions.forEach((_, i) => {
+        varMap.set(String.fromCharCode(65 + i), conditionMatchesByGroup[i].has(group));
       });
-      matched = evaluate(varMap);
+      groupQualifies = evaluate(varMap);
+    } else if (combineOperator === 'OR') {
+      // OR: at least one condition has a match in this Group
+      groupQualifies = conditionMatchesByGroup.some(gm => gm.has(group));
     } else {
-      matched = conditions.every(cond => evaluateCondition(row, cond));
+      // Default AND: all conditions must have at least one match in this Group
+      groupQualifies = conditionMatchesByGroup.every(gm => gm.has(group));
     }
 
-    if (matched) {
-      directMatches.add(row._rowIndex);
-      matchedGroups.add(row.Group);
+    if (groupQualifies) {
+      matchedGroups.add(group);
+      // Collect direct matches: rows that matched any condition in this Group
+      for (const groupMatches of conditionMatchesByGroup) {
+        const indices = groupMatches.get(group);
+        if (indices) {
+          for (const idx of indices) {
+            directMatches.add(idx);
+          }
+        }
+      }
+    }
+  }
+
+  // Phase 3: visibleRowIndices = all rows in matched Groups
+  const visibleRowIndices = new Set<number>();
+  for (const row of rows) {
+    if (matchedGroups.has(row.Group)) {
+      visibleRowIndices.add(row._rowIndex);
     }
   }
 
   return {
     directMatches,
     matchedGroups,
-    visibleRowIndices: directMatches,
+    visibleRowIndices,
   };
 }

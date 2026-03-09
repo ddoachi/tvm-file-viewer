@@ -74,7 +74,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
           const parsed = parseFilterExpression(expression);
           if (!parsed) { setFiltering(false); return; }
 
-          const result = applyGroupFilter(rows, parsed.conditions);
+          const result = applyGroupFilter(rows, parsed.conditions, undefined, parsed.operator);
           setFilterResult(result);
         }
       } finally {
