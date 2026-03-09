@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent } from 'ag-grid-community';
+import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent, CellContextMenuEvent } from 'ag-grid-community';
 import { Box, CircularProgress, Snackbar, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useAppStore, selectFilterResult } from '../store/appStore';
@@ -23,6 +23,7 @@ export const DataGrid: React.FC = () => {
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number } | null>(null);
+  const contextRowRef = useRef<CsvRow | null>(null);
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
   const allRows = activeFile?.rows || [];
@@ -42,33 +43,38 @@ export const DataGrid: React.FC = () => {
     }
   }, []);
 
+  // AG Grid cell right-click handler
+  const handleCellContextMenu = useCallback((event: CellContextMenuEvent<CsvRow>) => {
+    const browserEvent = event.event as MouseEvent;
+    if (!browserEvent) return;
+    browserEvent.preventDefault();
+    contextRowRef.current = event.data || null;
+    setContextMenu({ mouseX: browserEvent.clientX, mouseY: browserEvent.clientY });
+  }, []);
+
   const handleCopyRows = useCallback(() => {
     const api = gridRef.current?.api;
-    if (!api) return;
-    const selectedRows = api.getSelectedRows() as CsvRow[];
+    const selectedRows = api ? api.getSelectedRows() as CsvRow[] : [];
+
     if (selectedRows.length > 1) {
       copyToClipboard(formatRowsForClipboard(selectedRows));
-    } else if (selectedRows.length === 1) {
-      copyToClipboard(formatRowForClipboard(selectedRows[0]));
+    } else if (contextRowRef.current) {
+      copyToClipboard(formatRowForClipboard(contextRowRef.current));
     }
     setContextMenu(null);
   }, [copyToClipboard]);
-
-  const handleContextMenu = useCallback((event: React.MouseEvent) => {
-    event.preventDefault();
-    setContextMenu({ mouseX: event.clientX, mouseY: event.clientY });
-  }, []);
 
   const handleCloseContextMenu = useCallback(() => {
     setContextMenu(null);
   }, []);
 
-  const selectedCount = useRef(0);
-  const handleSelectionChanged = useCallback(() => {
+  const getCopyLabel = useCallback((): string => {
     const api = gridRef.current?.api;
-    if (api) {
-      selectedCount.current = api.getSelectedRows().length;
+    const selectedRows = api ? api.getSelectedRows() : [];
+    if (selectedRows.length > 1) {
+      return `Copy ${selectedRows.length} Rows`;
     }
+    return 'Copy Row';
   }, []);
 
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
@@ -126,7 +132,6 @@ export const DataGrid: React.FC = () => {
       <div
         className={themeClass}
         style={{ flex: '1 1 0', width: '100%', position: 'relative', overflow: 'hidden' }}
-        onContextMenu={handleContextMenu}
       >
         {isBusy && (
           <Box sx={{
@@ -148,6 +153,7 @@ export const DataGrid: React.FC = () => {
           autoGroupColumnDef={autoGroupColumnDef}
           groupDefaultExpanded={0}
           rowSelection="multiple"
+          suppressContextMenu={true}
           rowHeight={28}
           headerHeight={32}
           floatingFiltersHeight={28}
@@ -155,7 +161,7 @@ export const DataGrid: React.FC = () => {
           quickFilterText={searchText}
           onRowClicked={handleRowClick}
           onFilterChanged={handleFilterChanged}
-          onSelectionChanged={handleSelectionChanged}
+          onCellContextMenu={handleCellContextMenu}
           rowBuffer={20}
           suppressColumnVirtualisation={false}
           overlayNoRowsTemplate={
@@ -176,9 +182,7 @@ export const DataGrid: React.FC = () => {
       >
         <MenuItem onClick={handleCopyRows} sx={{ fontSize: 13 }}>
           <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
-          <ListItemText>
-            {selectedCount.current > 1 ? `Copy ${selectedCount.current} Rows` : 'Copy Row'}
-          </ListItemText>
+          <ListItemText>{contextMenu ? getCopyLabel() : 'Copy Row'}</ListItemText>
         </MenuItem>
       </Menu>
 
