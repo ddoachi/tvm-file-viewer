@@ -43,44 +43,42 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
   const handleVisualApply = useCallback((expression: string) => {
     setFiltering(true);
 
-    setTimeout(() => {
-      try {
-        if (expression.startsWith('FORMULA:')) {
-          const parts = expression.substring(8).split(':');
-          if (parts.length !== 2) { setFiltering(false); return; }
+    try {
+      if (expression.startsWith('FORMULA:')) {
+        const parts = expression.substring(8).split(':');
+        if (parts.length !== 2) { setFiltering(false); return; }
 
-          const formula = parts[0];
-          const conditionStrings = parts[1].split('|||');
+        const formula = parts[0];
+        const conditionStrings = parts[1].split('|||');
 
-          const conditions = conditionStrings
-            .map(condStr => {
-              const parsed = parseFilterExpression(condStr);
-              return parsed?.conditions[0];
-            })
-            .filter((c): c is FilterCondition => c !== undefined);
+        const conditions = conditionStrings
+          .map(condStr => {
+            const parsed = parseFilterExpression(condStr);
+            return parsed?.conditions[0];
+          })
+          .filter((c): c is FilterCondition => c !== undefined);
 
-          if (conditions.length === 0) { setFiltering(false); return; }
+        if (conditions.length === 0) { setFiltering(false); return; }
 
-          const variables = new Set(
-            conditions.map((_, index) => String.fromCharCode(65 + index))
-          );
-          const parseResult = parseFormula(formula, variables);
+        const variables = new Set(
+          conditions.map((_, index) => String.fromCharCode(65 + index))
+        );
+        const parseResult = parseFormula(formula, variables);
 
-          if (!parseResult.isValid || !parseResult.evaluate) { setFiltering(false); return; }
+        if (!parseResult.isValid || !parseResult.evaluate) { setFiltering(false); return; }
 
-          const result = applyGroupFilter(rows, conditions, parseResult.evaluate);
-          setFilterResult(result);
-        } else {
-          const parsed = parseFilterExpression(expression);
-          if (!parsed) { setFiltering(false); return; }
+        const result = applyGroupFilter(rows, conditions, parseResult.evaluate);
+        setFilterResult(result);
+      } else {
+        const parsed = parseFilterExpression(expression);
+        if (!parsed) { setFiltering(false); return; }
 
-          const result = applyGroupFilter(rows, parsed.conditions, undefined, parsed.operator);
-          setFilterResult(result);
-        }
-      } finally {
-        setFiltering(false);
+        const result = applyGroupFilter(rows, parsed.conditions, undefined, parsed.operator);
+        setFilterResult(result);
       }
-    }, 50);
+    } finally {
+      setFiltering(false);
+    }
   }, [rows, setFilterResult, setFiltering]);
 
   const handleVisualClear = () => {

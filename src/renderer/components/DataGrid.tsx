@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent } from 'ag-grid-community';
+import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent, IRowNode } from 'ag-grid-community';
 import 'ag-grid-enterprise';
 import { Box, CircularProgress, Chip } from '@mui/material';
 import { useAppStore, selectFilterResult } from '../store/appStore';
@@ -11,15 +11,13 @@ export const DataGrid: React.FC = () => {
   const { openFiles, activeFileId, searchText, themeMode, isLoading, isFiltering, setGridFilteredCount } = useAppStore();
   const filterResult = useAppStore(selectFilterResult);
   const gridRef = useRef<AgGridReact<CsvRow>>(null);
+  const filterResultRef = useRef(filterResult);
+
+  // Keep ref in sync for use in AG Grid callbacks (which capture closures)
+  filterResultRef.current = filterResult;
 
   const activeFile = openFiles.find(f => f.id === activeFileId);
   const allRows = activeFile?.rows || [];
-
-  // Filter rowData directly — show only rows matching the filter
-  const rows = useMemo(() => {
-    if (!filterResult) return allRows;
-    return allRows.filter(row => filterResult.visibleRowIndices.has(row._rowIndex));
-  }, [allRows, filterResult]);
 
   const totalCount = allRows.length;
   const matchedCount = filterResult ? filterResult.directMatches.size : 0;
@@ -45,6 +43,25 @@ export const DataGrid: React.FC = () => {
 
   const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => data.Net.split('.'), []);
 
+  // External filter: AG Grid calls these instead of rebuilding the tree
+  const isExternalFilterPresent = useCallback(() => {
+    return filterResultRef.current !== null;
+  }, []);
+
+  const doesExternalFilterPass = useCallback((node: IRowNode<CsvRow>) => {
+    const fr = filterResultRef.current;
+    if (!fr || !node.data) return true;
+    return fr.visibleRowIndices.has(node.data._rowIndex);
+  }, []);
+
+  // Trigger AG Grid external filter re-evaluation when filterResult changes
+  useEffect(() => {
+    const api = gridRef.current?.api;
+    if (api) {
+      api.onFilterChanged();
+    }
+  }, [filterResult]);
+
   const handleRowClick = useCallback((event: RowClickedEvent<CsvRow>) => {
     if (event.data && window.electronAPI) {
       window.electronAPI.onRowClick(event.data);
@@ -56,8 +73,8 @@ export const DataGrid: React.FC = () => {
     if (!api) return;
     let count = 0;
     api.forEachNodeAfterFilter(() => { count++; });
-    setGridFilteredCount(count < rows.length ? count : null);
-  }, [rows.length, setGridFilteredCount]);
+    setGridFilteredCount(count < allRows.length ? count : null);
+  }, [allRows.length, setGridFilteredCount]);
 
   // Clear AG Grid column filters when switching tabs
   useEffect(() => {
@@ -92,7 +109,7 @@ export const DataGrid: React.FC = () => {
         )}
         <AgGridReact<CsvRow>
           ref={gridRef}
-          rowData={rows}
+          rowData={allRows}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           treeData={true}
@@ -106,6 +123,8 @@ export const DataGrid: React.FC = () => {
           quickFilterText={searchText}
           onRowClicked={handleRowClick}
           onFilterChanged={handleFilterChanged}
+          isExternalFilterPresent={isExternalFilterPresent}
+          doesExternalFilterPass={doesExternalFilterPass}
           rowBuffer={20}
           suppressColumnVirtualisation={false}
           overlayNoRowsTemplate={
