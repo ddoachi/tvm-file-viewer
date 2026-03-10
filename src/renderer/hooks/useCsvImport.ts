@@ -3,8 +3,9 @@ import { useAppStore } from '../store/appStore';
 import { parseCsv } from '../services/csvParser';
 import { parseJson } from '../services/jsonParser';
 import { computeTreePaths } from '../services/treeTransformer';
+import type { CsvRow } from '../types';
 
-async function loadFileContent(filePath: string): Promise<import('../types').CsvRow[]> {
+async function loadFileContent(filePath: string): Promise<CsvRow[]> {
   const content = await window.electronAPI.readFile(filePath);
   const fileExtension = filePath.split('.').pop()?.toLowerCase();
 

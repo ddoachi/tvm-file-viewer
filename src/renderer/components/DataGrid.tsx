@@ -8,11 +8,21 @@ import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
 
 function formatRowForClipboard(row: CsvRow): string {
-  return `${row.Net}\t${row.Group}\t${row.Vnet1}\t${row.Vnet2}`;
+  return [
+    row.tree, row.hier_LV, row.parent_master, row.master, row.multiple,
+    row.xprobe, row.assigned, row.vnets, row["D/S/B"], row.DNW, row.G,
+    row.switch_type, row.psw_detected, row.psw_used, row.tg,
+    row.cmos_drv, row.vnets_group, row.is_short,
+  ].join('\t');
 }
 
 function formatRowsForClipboard(rows: CsvRow[]): string {
-  const header = 'Net\tGroup\tVnet1\tVnet2';
+  const header = [
+    'tree', 'hier_LV', 'parent_master', 'master', 'multiple',
+    'xprobe', 'assigned', 'vnets', 'D/S/B', 'DNW', 'G',
+    'switch_type', 'psw_detected', 'psw_used', 'tg',
+    'cmos_drv', 'vnets_group', 'is_short',
+  ].join('\t');
   const lines = rows.map(formatRowForClipboard);
   return [header, ...lines].join('\n');
 }
@@ -78,13 +88,27 @@ export const DataGrid: React.FC = () => {
   }, []);
 
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
-    { field: 'Group', headerName: 'Group', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
-    { field: 'Vnet1', headerName: 'Vnet1', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
-    { field: 'Vnet2', headerName: 'Vnet2', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'hier_LV', headerName: 'hier_LV', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'parent_master', headerName: 'parent_master', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'master', headerName: 'master', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'multiple', headerName: 'multiple', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'xprobe', headerName: 'xprobe', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'assigned', headerName: 'assigned', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'vnets', headerName: 'vnets', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'D/S/B', headerName: 'D/S/B', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'DNW', headerName: 'DNW', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'G', headerName: 'G', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'switch_type', headerName: 'switch_type', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'psw_detected', headerName: 'psw_detected', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'psw_used', headerName: 'psw_used', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'tg', headerName: 'tg', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'cmos_drv', headerName: 'cmos_drv', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'vnets_group', headerName: 'vnets_group', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
+    { field: 'is_short', headerName: 'is_short', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
   ], []);
 
   const autoGroupColumnDef = useMemo<ColDef>(() => ({
-    headerName: 'Net',
+    headerName: 'tree',
     flex: 2,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
@@ -96,7 +120,7 @@ export const DataGrid: React.FC = () => {
     sortable: true, resizable: true, flex: 1, filter: true, suppressHeaderMenuButton: false,
   }), []);
 
-  const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => data.Net.split('.'), []);
+  const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => data.tree.split('.'), []);
 
   const handleRowClick = useCallback((event: RowClickedEvent<CsvRow>) => {
     if (event.data && window.electronAPI) {

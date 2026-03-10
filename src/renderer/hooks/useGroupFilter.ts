@@ -12,7 +12,7 @@ export function useGroupFilter() {
     return activeFile?.rows || [];
   }, [openFiles, activeFileId]);
 
-  const [column, setColumn] = useState<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>>('Net');
+  const [column, setColumn] = useState<keyof Omit<CsvRow, '_rowIndex'>>('tree');
   const [operator, setOperator] = useState<FilterOperator>('contains');
   const [value, setValue] = useState('');
   const [activeConditions, setActiveConditions] = useState<FilterCondition[]>([]);
@@ -26,7 +26,7 @@ export function useGroupFilter() {
   }, [column, operator, value, rows, setFilterResult]);
 
   const clearFilter = useCallback(() => {
-    setColumn('Net');
+    setColumn('tree');
     setOperator('contains');
     setValue('');
     setActiveConditions([]);

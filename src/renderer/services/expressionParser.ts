@@ -2,9 +2,9 @@
  * Expression Parser for Advanced Filtering
  *
  * Parses filter expressions like:
- * - "Vnet1==VDD"
- * - "Vnet1==VDD && Vnet2==VEXT"
- * - "Group==1 || Group==2"
+ * - "vnets==VDD"
+ * - "vnets==VDD && cmos_drv==PMOS"
+ * - "master==M1 || master==M2"
  */
 
 import type { CsvRow, FilterCondition, FilterOperator } from '../types';
@@ -89,13 +89,18 @@ function parseSingleCondition(condStr: string): FilterCondition | null {
       const value = match[2].trim();
 
       // Validate field is a valid column
-      if (!['Net', 'Group', 'Vnet1', 'Vnet2'].includes(field)) {
+      const validColumns: Array<keyof Omit<CsvRow, '_rowIndex'>> = [
+        'tree', 'hier_LV', 'parent_master', 'master', 'multiple', 'xprobe',
+        'assigned', 'vnets', 'D/S/B', 'DNW', 'G', 'switch_type',
+        'psw_detected', 'psw_used', 'tg', 'cmos_drv', 'vnets_group', 'is_short',
+      ];
+      if (!validColumns.includes(field as any)) {
         console.warn(`Invalid column name: ${field}`);
         return null;
       }
 
       return {
-        field: field as keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>,
+        field: field as keyof Omit<CsvRow, '_rowIndex'>,
         operator: op,
         value,
       };

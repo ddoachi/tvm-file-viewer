@@ -10,7 +10,7 @@ import type { CsvRow } from '../types/index';
 
 export interface Condition {
   id: string;
-  column: keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'> | '';
+  column: keyof Omit<CsvRow, '_rowIndex'> | '';
   operator: string;
   value: string;
 }
@@ -25,7 +25,11 @@ interface ConditionBlockProps {
   variableColor?: string;
 }
 
-const COLUMNS: Array<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>> = ['Net', 'Group', 'Vnet1', 'Vnet2'];
+const COLUMNS: Array<keyof Omit<CsvRow, '_rowIndex'>> = [
+  'tree', 'hier_LV', 'parent_master', 'master', 'multiple', 'xprobe',
+  'assigned', 'vnets', 'D/S/B', 'DNW', 'G', 'switch_type',
+  'psw_detected', 'psw_used', 'tg', 'cmos_drv', 'vnets_group', 'is_short',
+];
 
 const OPERATORS = [
   { value: '==', label: 'equals' },
