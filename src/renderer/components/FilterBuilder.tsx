@@ -102,7 +102,11 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
 
   const columnValues = useMemo(() => {
     const map = new Map<string, Set<string>>();
-    const columns: Array<keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>> = ['Net', 'Group', 'Vnet1', 'Vnet2'];
+    const columns: Array<keyof Omit<CsvRow, '_rowIndex'>> = [
+      'tree', 'hier_LV', 'parent_master', 'master', 'multiple', 'xprobe',
+      'assigned', 'vnets', 'D/S/B', 'DNW', 'G', 'switch_type',
+      'psw_detected', 'psw_used', 'tg', 'cmos_drv', 'vnets_group', 'is_short',
+    ];
     columns.forEach(col => map.set(col, new Set()));
     if (!rows || rows.length === 0) return map;
 

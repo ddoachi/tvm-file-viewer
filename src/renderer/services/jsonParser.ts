@@ -11,7 +11,7 @@ export interface ParseResult {
   rowCount: number;
 }
 
-const REQUIRED_FIELDS = ['Net', 'Group', 'Vnet1', 'Vnet2'];
+const REQUIRED_FIELDS = ['tree', 'master', 'vnets'];
 
 export function parseJson(jsonText: string): ParseResult {
   const errors: ParseError[] = [];
@@ -35,12 +35,24 @@ export function parseJson(jsonText: string): ParseResult {
       }
 
       return {
-        id: item.id || `row-${index}`,
-        parentId: item.parentId || null,
-        Net: item.Net || '',
-        Group: item.Group || '',
-        Vnet1: item.Vnet1 || '',
-        Vnet2: item.Vnet2 || '',
+        tree: item.tree || '',
+        hier_LV: Number(item.hier_LV) || 0,
+        parent_master: item.parent_master || '',
+        master: item.master || '',
+        multiple: Number(item.multiple) || 0,
+        xprobe: item.xprobe || '',
+        assigned: item.assigned || '',
+        vnets: item.vnets || '',
+        "D/S/B": Number(item["D/S/B"]) || 0,
+        DNW: Number(item.DNW) || 0,
+        G: Number(item.G) || 0,
+        switch_type: Number(item.switch_type) || 0,
+        psw_detected: Number(item.psw_detected) || 0,
+        psw_used: Number(item.psw_used) || 0,
+        tg: Number(item.tg) || 0,
+        cmos_drv: item.cmos_drv || '',
+        vnets_group: item.vnets_group || '',
+        is_short: Number(item.is_short) || 0,
         _rowIndex: index,
       };
     });

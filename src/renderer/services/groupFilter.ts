@@ -4,7 +4,8 @@ import type { CsvRow, FilterCondition, FilterResult } from '../types';
  * Evaluates a single filter condition against a row
  */
 export function evaluateCondition(row: CsvRow, condition: FilterCondition): boolean {
-  const fieldValue = row[condition.field] || '';
+  const rawValue = row[condition.field];
+  const fieldValue = rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
   const filterValue = condition.value || '';
 
   const fieldLower = fieldValue.toLowerCase();
@@ -62,7 +63,7 @@ export function applyGroupFilter(
     const groupMatches = new Map<string, number[]>();
     for (const row of rows) {
       if (evaluateCondition(row, condition)) {
-        const group = row.Group;
+        const group = row.master;
         let indices = groupMatches.get(group);
         if (!indices) {
           indices = [];
@@ -121,7 +122,7 @@ export function applyGroupFilter(
   // Phase 3: visibleRowIndices = all rows in matched Groups
   const visibleRowIndices = new Set<number>();
   for (const row of rows) {
-    if (matchedGroups.has(row.Group)) {
+    if (matchedGroups.has(row.master)) {
       visibleRowIndices.add(row._rowIndex);
     }
   }

@@ -14,15 +14,27 @@ declare global {
   }
 }
 
-export interface CsvRow {
-  id: string;
-  parentId: string | null;
-  Net: string;
-  Group: string;
-  Vnet1: string;
-  Vnet2: string;
+export type CsvRow = {
+  tree: string;
+  hier_LV: number;
+  parent_master: string;
+  master: string;
+  multiple: number;
+  xprobe: string;
+  assigned: string;
+  vnets: string;
+  "D/S/B": number;
+  DNW: number;
+  G: number;
+  switch_type: number;
+  psw_detected: number;
+  psw_used: number;
+  tg: number;
+  cmos_drv: string;
+  vnets_group: string;
+  is_short: number;
   _rowIndex: number;
-}
+};
 
 export interface ParseResult {
   rows: CsvRow[];
@@ -46,7 +58,7 @@ export type FilterOperator =
   | 'isNotEmpty';
 
 export interface FilterCondition {
-  field: keyof Omit<CsvRow, 'id' | 'parentId' | '_rowIndex'>;
+  field: keyof Omit<CsvRow, '_rowIndex'>;
   operator: FilterOperator;
   value: string;
 }
