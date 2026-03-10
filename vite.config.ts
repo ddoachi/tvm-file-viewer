@@ -19,6 +19,14 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port,
+      watch: {
+        ignored: [
+          '**/.git/**',
+          '**/node_modules/**',
+          '**/dist/**',
+          '**/build/**'
+        ]
+      }
     },
   };
 });

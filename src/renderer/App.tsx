@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Container, Box, Toolbar } from '@mui/material';
+import { Box } from '@mui/material';
 import { lightTheme, darkTheme } from './theme/muiTheme';
 import { AppHeader } from './components/AppHeader';
 import { FileTabs } from './components/FileTabs';
@@ -22,13 +22,10 @@ function App() {
 
         <Box sx={{ height: 4, flexShrink: 0 }} />
 
-        <Container maxWidth="xl" sx={{ flex: 1, py: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
-          <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <DataGrid />
-          </Box>
-
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0, width: '100%' }}>
+          <DataGrid />
           <StatusBar />
-        </Container>
+        </Box>
       </Box>
     </ThemeProvider>
   );

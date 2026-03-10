@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import type { ColDef, RowClickedEvent, GetDataPath, FilterChangedEvent, CellContextMenuEvent } from 'ag-grid-community';
+import type { ColDef, RowClickedEvent, FilterChangedEvent, CellContextMenuEvent } from 'ag-grid-community';
 import { Box, CircularProgress, Snackbar, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useAppStore, selectFilterResult } from '../store/appStore';
@@ -88,6 +88,7 @@ export const DataGrid: React.FC = () => {
   }, []);
 
   const columnDefs = useMemo<ColDef<CsvRow>[]>(() => [
+    { field: 'tree', headerName: 'tree', flex: 2, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true, enableRowGroup: true },
     { field: 'hier_LV', headerName: 'hier_LV', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
     { field: 'parent_master', headerName: 'parent_master', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
     { field: 'master', headerName: 'master', flex: 1, sortable: true, resizable: true, filter: 'agTextColumnFilter', floatingFilter: true },
@@ -108,19 +109,15 @@ export const DataGrid: React.FC = () => {
   ], []);
 
   const autoGroupColumnDef = useMemo<ColDef>(() => ({
-    headerName: 'tree',
     flex: 2,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     resizable: true,
-    cellRendererParams: { suppressCount: true },
   }), []);
 
   const defaultColDef = useMemo<ColDef>(() => ({
-    sortable: true, resizable: true, flex: 1, filter: true, suppressHeaderMenuButton: false,
+    sortable: true, resizable: true, flex: 1, filter: true, suppressHeaderMenuButton: false, enableRowGroup: true,
   }), []);
-
-  const getDataPath = useCallback<GetDataPath<CsvRow>>((data) => data.tree.split('.'), []);
 
   const handleRowClick = useCallback((event: RowClickedEvent<CsvRow>) => {
     if (event.data && window.electronAPI) {
@@ -155,7 +152,7 @@ export const DataGrid: React.FC = () => {
 
       <div
         className={themeClass}
-        style={{ flex: '1 1 0', width: '100%', position: 'relative', overflow: 'hidden' }}
+        style={{ flex: '1 1 0', width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}
       >
         {isBusy && (
           <Box sx={{
@@ -172,9 +169,8 @@ export const DataGrid: React.FC = () => {
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
-          treeData={true}
-          getDataPath={getDataPath}
           autoGroupColumnDef={autoGroupColumnDef}
+          rowGroupPanelShow="always"
           groupDefaultExpanded={0}
           rowSelection="multiple"
           suppressContextMenu={true}
