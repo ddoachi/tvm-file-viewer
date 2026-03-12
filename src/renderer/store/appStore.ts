@@ -6,6 +6,7 @@ export interface OpenFile {
   fileName: string;
   filePath: string;
   rows: CsvRow[];
+  columnValues: Map<string, Set<string>>;
 }
 
 interface AppState {
@@ -28,7 +29,7 @@ interface AppState {
   setSearchText: (text: string) => void;
   setThemeMode: (mode: 'light' | 'dark') => void;
   setGridFilteredCount: (count: number | null) => void;
-  updateFileRows: (filePath: string, rows: CsvRow[]) => void;
+  updateFileRows: (filePath: string, rows: CsvRow[], columnValues: Map<string, Set<string>>) => void;
   renameFile: (fileId: string, newName: string) => void;
   reset: () => void;
 }
@@ -105,9 +106,9 @@ export const useAppStore = create<AppState>((set) => ({
 
   setGridFilteredCount: (count) => set({ gridFilteredCount: count }),
 
-  updateFileRows: (filePath, rows) => set((state) => ({
+  updateFileRows: (filePath, rows, columnValues) => set((state) => ({
     openFiles: state.openFiles.map(f =>
-      f.filePath === filePath ? { ...f, rows } : f
+      f.filePath === filePath ? { ...f, rows, columnValues } : f
     ),
   })),
 

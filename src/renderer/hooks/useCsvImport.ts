@@ -3,9 +3,10 @@ import { useAppStore } from '../store/appStore';
 import { parseCsv } from '../services/csvParser';
 import { parseJson } from '../services/jsonParser';
 import { computeTreePaths } from '../services/treeTransformer';
+import { buildColumnValueSets } from '../services/columnValues';
 import type { CsvRow } from '../types';
 
-async function loadFileContent(filePath: string): Promise<CsvRow[]> {
+async function loadFileContent(filePath: string): Promise<{ rows: CsvRow[]; columnValues: Map<string, Set<string>> }> {
   const content = await window.electronAPI.readFile(filePath);
   const fileExtension = filePath.split('.').pop()?.toLowerCase();
 
@@ -20,9 +21,13 @@ async function loadFileContent(filePath: string): Promise<CsvRow[]> {
     console.warn('Parse errors during reload:', parseResult.errors);
   }
 
-  return fileExtension === 'csv'
+  const rows = fileExtension === 'csv'
     ? computeTreePaths(parseResult.rows)
     : parseResult.rows;
+
+  const columnValues = buildColumnValueSets(rows);
+
+  return { rows, columnValues };
 }
 
 export function useCsvImport() {
@@ -44,12 +49,12 @@ export function useCsvImport() {
 
       setLoading(true);
 
-      const rows = await loadFileContent(filePath);
+      const { rows, columnValues } = await loadFileContent(filePath);
 
       const fileName = filePath.split(/[\\/]/).pop() || 'unknown';
       const fileId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      addFile({ id: fileId, fileName, filePath, rows });
+      addFile({ id: fileId, fileName, filePath, rows, columnValues });
 
       // Start watching the file for changes
       window.electronAPI.watchFile(filePath);
@@ -73,8 +78,8 @@ export function useCsvImport() {
 
     const cleanup = window.electronAPI.onFileChanged(async (filePath: string) => {
       try {
-        const rows = await loadFileContent(filePath);
-        updateFileRows(filePath, rows);
+        const { rows, columnValues } = await loadFileContent(filePath);
+        updateFileRows(filePath, rows, columnValues);
       } catch (error) {
         console.error('File reload error:', error);
       }
@@ -88,9 +93,9 @@ export function useCsvImport() {
     if (!window.electronAPI) return;
 
     return () => {
-      for (const file of openFiles) {
+      openFiles.forEach(file => {
         window.electronAPI.unwatchFile(file.filePath);
-      }
+      });
     };
   }, [openFiles]);
 

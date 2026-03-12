@@ -35,13 +35,12 @@ export function evaluateCondition(row: CsvRow, condition: FilterCondition): bool
 
 /**
  * Group-level filtering: evaluate each condition independently per row,
- * then check at the Group level whether ALL conditions (or a boolean formula)
- * are satisfied by at least one row each within that Group.
+ * then check at the Group level (grouped by `tree` column) whether ALL
+ * conditions (or a boolean formula) are satisfied by at least one row
+ * each within that Group.
  *
- * Example: Vnet1=="VDD" && Vnet1=="VSS"
- *   - For each Group, check: does this Group have >=1 row with Vnet1==VDD
- *     AND >=1 row with Vnet1==VSS?
- *   - If yes, show ALL rows in that Group.
+ * When a Group qualifies, ALL rows in that Group are shown (not just
+ * the matching rows).
  */
 export function applyGroupFilter(
   rows: CsvRow[],
@@ -57,13 +56,12 @@ export function applyGroupFilter(
     };
   }
 
-  // Phase 1: For each condition, find which Groups have matching rows
-  // and collect matching row indices per condition per Group
+  // Phase 1: For each condition, find which Groups (by tree) have matching rows
   const conditionMatchesByGroup: Map<string, number[]>[] = conditions.map(condition => {
     const groupMatches = new Map<string, number[]>();
-    for (const row of rows) {
+    rows.forEach(row => {
       if (evaluateCondition(row, condition)) {
-        const group = row.master;
+        const group = row.tree;
         let indices = groupMatches.get(group);
         if (!indices) {
           indices = [];
@@ -71,23 +69,23 @@ export function applyGroupFilter(
         }
         indices.push(row._rowIndex);
       }
-    }
+    });
     return groupMatches;
   });
 
   // Collect all Groups that have at least one match for any condition
   const allGroups = new Set<string>();
-  for (const groupMatches of conditionMatchesByGroup) {
-    for (const group of groupMatches.keys()) {
+  conditionMatchesByGroup.forEach(groupMatches => {
+    groupMatches.forEach((_, group) => {
       allGroups.add(group);
-    }
-  }
+    });
+  });
 
   // Phase 2: For each Group, evaluate formula/operator at Group level
   const matchedGroups = new Set<string>();
   const directMatches = new Set<number>();
 
-  for (const group of allGroups) {
+  allGroups.forEach(group => {
     let groupQualifies: boolean;
 
     if (evaluate) {
@@ -108,24 +106,24 @@ export function applyGroupFilter(
     if (groupQualifies) {
       matchedGroups.add(group);
       // Collect direct matches: rows that matched any condition in this Group
-      for (const groupMatches of conditionMatchesByGroup) {
+      conditionMatchesByGroup.forEach(groupMatches => {
         const indices = groupMatches.get(group);
         if (indices) {
-          for (const idx of indices) {
+          indices.forEach(idx => {
             directMatches.add(idx);
-          }
+          });
         }
-      }
+      });
     }
-  }
+  });
 
-  // Phase 3: visibleRowIndices = all rows in matched Groups
+  // Phase 3: visibleRowIndices = ALL rows in matched Groups (by tree)
   const visibleRowIndices = new Set<number>();
-  for (const row of rows) {
-    if (matchedGroups.has(row.master)) {
+  rows.forEach(row => {
+    if (matchedGroups.has(row.tree)) {
       visibleRowIndices.add(row._rowIndex);
     }
-  }
+  });
 
   return {
     directMatches,
