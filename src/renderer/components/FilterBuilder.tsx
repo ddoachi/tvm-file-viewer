@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -33,18 +33,15 @@ export function getVariableColor(index: number): string {
 
 // Colored formula overlay component
 const FormulaOverlay: React.FC<{ formula: string; conditionCount: number }> = ({ formula, conditionCount }) => {
-  const parts: React.ReactNode[] = [];
-  for (let i = 0; i < formula.length; i++) {
-    const ch = formula[i];
+  const parts = Array.from(formula).map((ch, i) => {
     const varIndex = ch.charCodeAt(0) - 65; // A=0, B=1, ...
     if (varIndex >= 0 && varIndex < conditionCount && ch >= 'A' && ch <= 'Z') {
-      parts.push(
+      return (
         <span key={i} style={{ color: getVariableColor(varIndex), fontWeight: 700 }}>{ch}</span>
       );
-    } else {
-      parts.push(<span key={i}>{ch}</span>);
     }
-  }
+    return <span key={i}>{ch}</span>;
+  });
   return <>{parts}</>;
 };
 
@@ -60,12 +57,14 @@ const ROW_HEIGHT = 32;
 
 interface FilterBuilderProps {
   rows: CsvRow[];
+  columnValues: Map<string, Set<string>>;
   onApply: (expression: string) => void;
   onClear: () => void;
 }
 
 export const FilterBuilder: React.FC<FilterBuilderProps> = ({
   rows,
+  columnValues,
   onApply,
   onClear,
 }) => {
@@ -99,30 +98,6 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
     input.addEventListener('scroll', handleScroll);
     return () => input.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const columnValues = useMemo(() => {
-    const map = new Map<string, Set<string>>();
-    const columns: Array<keyof Omit<CsvRow, '_rowIndex'>> = [
-      'tree', 'hier_LV', 'parent_master', 'master', 'multiple', 'xprobe',
-      'assigned', 'vnets', 'D/S/B', 'DNW', 'G', 'switch_type',
-      'psw_detected', 'psw_used', 'tg', 'cmos_drv', 'vnets_group', 'is_short',
-    ];
-    columns.forEach(col => map.set(col, new Set()));
-    if (!rows || rows.length === 0) return map;
-
-    const sampleSize = Math.min(rows.length, 10000);
-    const step = Math.max(1, Math.floor(rows.length / sampleSize));
-    for (let i = 0; i < rows.length; i += step) {
-      const row = rows[i];
-      columns.forEach(col => {
-        const value = row[col];
-        if (value !== null && value !== undefined && value !== '') {
-          map.get(col)?.add(String(value));
-        }
-      });
-    }
-    return map;
-  }, [rows]);
 
   const handleAddCondition = useCallback(() => {
     setConditions(prev => [...prev, { id: generateId(), column: '', operator: '==', value: '' }]);
@@ -302,7 +277,10 @@ export const FilterBuilder: React.FC<FilterBuilderProps> = ({
           {/* Help text */}
           <Box sx={{ borderRadius: 0.5, px: 1, height: ROW_HEIGHT, display: 'flex', alignItems: 'center' }}>
             <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', fontFamily: 'monospace' }}>
-              e.g. <strong>A && B</strong> &nbsp; <span style={{ opacity: 0.7 }}>A || (B && !C)</span>
+              {formula.trim()
+                ? <>e.g. <strong>A && B</strong> &nbsp; <span style={{ opacity: 0.7 }}>A || (B && !C)</span></>
+                : <>Empty = all conditions <strong>AND</strong></>
+              }
             </Typography>
           </Box>
         </Box>

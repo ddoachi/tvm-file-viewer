@@ -24,11 +24,6 @@ export interface ParsedExpression {
  * - Column^=Value (starts with)
  * - Column$=Value (ends with)
  * - Multiple conditions with && (AND) or || (OR)
- *
- * Examples:
- * - "Vnet1==VDD"
- * - "Vnet1==VDD && Vnet2==VEXT"
- * - "Group==1 || Group==2"
  */
 export function parseFilterExpression(expression: string): ParsedExpression | null {
   if (!expression || expression.trim() === '') {
@@ -52,12 +47,12 @@ export function parseFilterExpression(expression: string): ParsedExpression | nu
   // Parse each condition
   const conditions: FilterCondition[] = [];
 
-  for (const condStr of conditionStrings) {
+  conditionStrings.forEach(condStr => {
     const condition = parseSingleCondition(condStr);
     if (condition) {
       conditions.push(condition);
     }
-  }
+  });
 
   if (conditions.length === 0) {
     return null;
@@ -70,10 +65,9 @@ export function parseFilterExpression(expression: string): ParsedExpression | nu
 }
 
 /**
- * Parse a single condition like "Vnet1==VDD"
+ * Parse a single condition like "vnets==VDD"
  */
 function parseSingleCondition(condStr: string): FilterCondition | null {
-  // Regex to match: Column Operator Value
   const patterns = [
     { regex: /^(\w+)\s*==\s*(.+)$/, op: 'equals' as FilterOperator },
     { regex: /^(\w+)\s*!=\s*(.+)$/, op: 'notEquals' as FilterOperator },
@@ -82,7 +76,9 @@ function parseSingleCondition(condStr: string): FilterCondition | null {
     { regex: /^(\w+)\s*\$=\s*(.+)$/, op: 'endsWith' as FilterOperator },
   ];
 
-  for (const { regex, op } of patterns) {
+  let result: FilterCondition | null = null;
+
+  patterns.some(({ regex, op }) => {
     const match = condStr.match(regex);
     if (match) {
       const field = match[1];
@@ -96,18 +92,20 @@ function parseSingleCondition(condStr: string): FilterCondition | null {
       ];
       if (!validColumns.includes(field as any)) {
         console.warn(`Invalid column name: ${field}`);
-        return null;
+        return false;
       }
 
-      return {
+      result = {
         field: field as keyof Omit<CsvRow, '_rowIndex'>,
         operator: op,
         value,
       };
+      return true; // stop iteration
     }
-  }
+    return false;
+  });
 
-  return null;
+  return result;
 }
 
 /**
@@ -115,10 +113,8 @@ function parseSingleCondition(condStr: string): FilterCondition | null {
  */
 export function evaluateExpression(row: CsvRow, parsed: ParsedExpression): boolean {
   if (parsed.operator === 'AND') {
-    // All conditions must match
     return parsed.conditions.every(cond => evaluateSingleCondition(row, cond));
   } else {
-    // At least one condition must match
     return parsed.conditions.some(cond => evaluateSingleCondition(row, cond));
   }
 }

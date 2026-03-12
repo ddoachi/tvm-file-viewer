@@ -29,10 +29,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
   const lastExpressionRef = useRef<string | null>(null);
   const prevRowsRef = useRef<CsvRow[]>([]);
 
-  const rows = useMemo(() => {
-    const activeFile = openFiles.find(f => f.id === activeFileId);
-    return activeFile?.rows || [];
+  const activeFile = useMemo(() => {
+    return openFiles.find(f => f.id === activeFileId);
   }, [openFiles, activeFileId]);
+
+  const rows = activeFile?.rows || [];
+
+  const columnValues = useMemo(() => {
+    return activeFile?.columnValues || new Map<string, Set<string>>();
+  }, [activeFile]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
@@ -163,6 +168,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ disabled }) => {
         <AccordionDetails sx={{ pt: 0, pb: 1.5, px: 2 }}>
           <FilterBuilder
             rows={rows}
+            columnValues={columnValues}
             onApply={handleVisualApply}
             onClear={handleVisualClear}
           />

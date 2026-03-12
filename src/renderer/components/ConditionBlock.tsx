@@ -102,7 +102,7 @@ export const ConditionBlock: React.FC<ConditionBlockProps> = ({
       <Autocomplete
         size="small"
         options={COLUMNS}
-        value={condition.column || null}
+        value={condition.column || undefined}
         onChange={handleColumnChange}
         renderInput={(params) => (
           <TextField

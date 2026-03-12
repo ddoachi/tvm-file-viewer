@@ -157,8 +157,8 @@ ipcMain.handle('file:unwatch', (_event, filePath: string) => {
 
 // Clean up all watchers on quit
 app.on('before-quit', () => {
-  for (const watcher of fileWatchers.values()) {
+  fileWatchers.forEach(watcher => {
     watcher.close();
-  }
+  });
   fileWatchers.clear();
 });

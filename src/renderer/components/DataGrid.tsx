@@ -6,6 +6,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useAppStore, selectFilterResult } from '../store/appStore';
 import type { CsvRow } from '../types';
 import { FilterPanel } from './FilterPanel';
+import { agGridThemeLight, agGridThemeDark } from '../theme/agGridTheme';
 
 function formatRowForClipboard(row: CsvRow): string {
   return [
@@ -108,7 +109,7 @@ export const DataGrid: React.FC = () => {
     { field: 'is_short', headerName: 'is_short', flex: 1, sortable: true, resizable: true, filter: 'agNumberColumnFilter', floatingFilter: true },
   ], []);
 
-  const autoGroupColumnDef = useMemo<ColDef>(() => ({
+  const autoGroupColumnDef = useMemo<ColDef<CsvRow>>(() => ({
     flex: 2,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
@@ -142,16 +143,14 @@ export const DataGrid: React.FC = () => {
   }, [activeFileId]);
 
   const isBusy = isLoading || isFiltering;
-  const themeClass = themeMode === 'light'
-    ? 'ag-theme-quartz ag-theme-tvm-light'
-    : 'ag-theme-quartz-dark ag-theme-tvm-dark';
+  const theme = themeMode === 'light' ? agGridThemeLight : agGridThemeDark;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, gap: 0.5 }}>
       <FilterPanel disabled={isBusy} />
 
       <div
-        className={themeClass}
+        className="ag-theme-tvm"
         style={{ flex: '1 1 0', width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}
       >
         {isBusy && (
@@ -166,17 +165,15 @@ export const DataGrid: React.FC = () => {
         )}
         <AgGridReact<CsvRow>
           ref={gridRef}
+          theme={theme}
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           autoGroupColumnDef={autoGroupColumnDef}
           rowGroupPanelShow="always"
           groupDefaultExpanded={0}
-          rowSelection="multiple"
+          rowSelection={{ mode: 'multiRow' }}
           suppressContextMenu={true}
-          rowHeight={28}
-          headerHeight={32}
-          floatingFiltersHeight={28}
           animateRows={false}
           quickFilterText={searchText}
           onRowClicked={handleRowClick}

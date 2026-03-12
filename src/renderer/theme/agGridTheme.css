@@ -1,141 +1,26 @@
 /**
- * AG Grid Custom Theme for Total Voltage Manager
+ * AG Grid Structural Overrides for Total Voltage Manager
  *
- * Custom styling for AG Grid to match the design system
- * Based on ag-theme-alpine with engineering-focused modifications
+ * Theme tokens (colors, fonts, spacing) are handled by withParams in agGridTheme.ts.
+ * This file contains structural CSS that cannot be expressed via withParams.
  */
-
-/* ============================================================================
-   LIGHT THEME BASE
-   ============================================================================ */
-
-.ag-theme-tvm-light {
-  /* Colors */
-  --ag-foreground-color: #1F2937;
-  --ag-background-color: #FFFFFF;
-  --ag-header-foreground-color: #1F2937;
-  --ag-header-background-color: #F8F9FA;
-  --ag-odd-row-background-color: #FFFFFF;
-  --ag-even-row-background-color: #FAFBFC;
-
-  /* Borders */
-  --ag-border-color: #E5E7EB;
-  --ag-row-border-color: #F1F3F5;
-  --ag-secondary-border-color: #D1D5DB;
-
-  /* Column separators - make visible */
-  --ag-column-border: solid 1px #E5E7EB;
-
-  /* Interactive states */
-  --ag-row-hover-color: #F3F4F6;
-  --ag-selected-row-background-color: #EBF4FF;
-  --ag-range-selection-border-color: #2D7FF9;
-
-  /* Primary color (blue accent) */
-  --ag-checkbox-checked-color: #2D7FF9;
-  --ag-input-focus-border-color: #2D7FF9;
-
-  /* Typography - smaller font */
-  --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --ag-font-size: 12px;
-  --ag-header-font-size: 12px;
-  --ag-header-font-weight: 600;
-
-  /* Spacing - compact */
-  --ag-grid-size: 3px;
-  --ag-row-height: 28px;
-  --ag-header-height: 32px;
-  --ag-cell-horizontal-padding: 8px;
-
-  /* Tree indentation */
-  --ag-row-group-indent-size: 20px;
-
-  /* Borders and radius */
-  --ag-borders: solid 1px;
-  --ag-border-radius: 6px;
-
-  /* Icons */
-  --ag-icon-size: 14px;
-
-  /* Shadows */
-  --ag-card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-/* ============================================================================
-   DARK THEME BASE
-   ============================================================================ */
-
-.ag-theme-tvm-dark {
-  /* Colors */
-  --ag-foreground-color: #F9FAFB;
-  --ag-background-color: #0F1419;
-  --ag-header-foreground-color: #F9FAFB;
-  --ag-header-background-color: #1A1F2A;
-  --ag-odd-row-background-color: #0F1419;
-  --ag-even-row-background-color: #151A24;
-
-  /* Borders */
-  --ag-border-color: #2A303D;
-  --ag-row-border-color: #1F2631;
-  --ag-secondary-border-color: #374151;
-
-  /* Column separators - make visible */
-  --ag-column-border: solid 1px #374151;
-
-  /* Interactive states */
-  --ag-row-hover-color: #1F2937;
-  --ag-selected-row-background-color: #1E3A5F;
-  --ag-range-selection-border-color: #5C9FFA;
-
-  /* Primary color (blue accent - lighter for dark mode) */
-  --ag-checkbox-checked-color: #5C9FFA;
-  --ag-input-focus-border-color: #5C9FFA;
-
-  /* Typography - smaller font */
-  --ag-font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --ag-font-size: 12px;
-  --ag-header-font-size: 12px;
-  --ag-header-font-weight: 600;
-
-  /* Spacing - compact */
-  --ag-grid-size: 3px;
-  --ag-row-height: 28px;
-  --ag-header-height: 32px;
-  --ag-cell-horizontal-padding: 8px;
-
-  /* Tree indentation */
-  --ag-row-group-indent-size: 20px;
-
-  /* Borders and radius */
-  --ag-borders: solid 1px;
-  --ag-border-radius: 6px;
-
-  /* Icons */
-  --ag-icon-size: 14px;
-
-  /* Shadows */
-  --ag-card-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
-}
 
 /* ============================================================================
    HEADER STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-header,
-.ag-theme-tvm-dark .ag-header {
+.ag-theme-tvm .ag-header {
   border-bottom: 2px solid var(--ag-border-color);
-  font-weight: var(--ag-header-font-weight);
 }
 
-.ag-theme-tvm-light .ag-header-cell,
-.ag-theme-tvm-dark .ag-header-cell {
+.ag-theme-tvm .ag-header-cell {
   padding: 4px 8px;
   display: flex;
   align-items: center;
+  transition: none;
 }
 
-.ag-theme-tvm-light .ag-header-cell-label,
-.ag-theme-tvm-dark .ag-header-cell-label {
+.ag-theme-tvm .ag-header-cell-label {
   font-weight: 600;
   letter-spacing: 0.01em;
   display: flex;
@@ -143,40 +28,34 @@
   height: 100%;
 }
 
-/* Column resize handle/separator - stable width to prevent header blink */
-.ag-theme-tvm-light .ag-header-cell-resize,
-.ag-theme-tvm-dark .ag-header-cell-resize {
+/* Column resize handle */
+.ag-theme-tvm .ag-header-cell-resize {
   background-color: var(--ag-border-color);
   width: 2px;
   opacity: 0.5;
 }
 
-.ag-theme-tvm-light .ag-header-cell-resize:hover,
-.ag-theme-tvm-dark .ag-header-cell-resize:hover {
+.ag-theme-tvm .ag-header-cell-resize:hover {
   opacity: 1;
-  background-color: var(--ag-input-focus-border-color);
+  background-color: var(--ag-accent-color);
 }
 
-/* Floating filter row styling */
-.ag-theme-tvm-light .ag-floating-filter,
-.ag-theme-tvm-dark .ag-floating-filter {
+/* Floating filter row */
+.ag-theme-tvm .ag-floating-filter {
   border-bottom: 1px solid var(--ag-border-color);
 }
 
-.ag-theme-tvm-light .ag-floating-filter-input,
-.ag-theme-tvm-dark .ag-floating-filter-input {
+.ag-theme-tvm .ag-floating-filter-input {
   font-size: 11px;
 }
 
 /* Column header menu button */
-.ag-theme-tvm-light .ag-header-cell-menu-button,
-.ag-theme-tvm-dark .ag-header-cell-menu-button {
+.ag-theme-tvm .ag-header-cell-menu-button {
   opacity: 0.5;
   transition: opacity 100ms ease;
 }
 
-.ag-theme-tvm-light .ag-header-cell-menu-button:hover,
-.ag-theme-tvm-dark .ag-header-cell-menu-button:hover {
+.ag-theme-tvm .ag-header-cell-menu-button:hover {
   opacity: 1;
 }
 
@@ -184,131 +63,66 @@
    ROW STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-row,
-.ag-theme-tvm-dark .ag-row {
+.ag-theme-tvm .ag-row {
   border-bottom: 1px solid var(--ag-row-border-color);
   transition: background-color 100ms ease;
-}
-
-.ag-theme-tvm-light .ag-row:hover,
-.ag-theme-tvm-dark .ag-row:hover {
-  background-color: var(--ag-row-hover-color) !important;
-}
-
-.ag-theme-tvm-light .ag-row-selected,
-.ag-theme-tvm-dark .ag-row-selected {
-  background-color: var(--ag-selected-row-background-color) !important;
 }
 
 /* ============================================================================
    CELL STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-cell,
-.ag-theme-tvm-dark .ag-cell {
+.ag-theme-tvm .ag-cell {
   padding: 2px 8px;
   line-height: 1.4;
   display: flex;
   align-items: center;
   font-size: 12px;
-  border-right: var(--ag-column-border);
-}
-
-/* Remove right border on last cell */
-.ag-theme-tvm-light .ag-cell:last-child,
-.ag-theme-tvm-dark .ag-cell:last-child {
-  border-right: none;
-}
-
-/* Monospace font for data values (voltage columns) */
-.ag-theme-tvm-light .ag-cell[col-id="Vnet1"],
-.ag-theme-tvm-light .ag-cell[col-id="Vnet2"],
-.ag-theme-tvm-dark .ag-cell[col-id="Vnet1"],
-.ag-theme-tvm-dark .ag-cell[col-id="Vnet2"] {
-  font-family: "JetBrains Mono", "Fira Code", "Consolas", "Monaco", monospace;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-
-/* Net column monospace */
-.ag-theme-tvm-light .ag-cell[col-id="Net"],
-.ag-theme-tvm-dark .ag-cell[col-id="Net"] {
-  font-family: "JetBrains Mono", "Fira Code", "Consolas", "Monaco", monospace;
-  font-size: 11px;
 }
 
 /* ============================================================================
    TREE / GROUP CELL STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-group-contracted,
-.ag-theme-tvm-light .ag-group-expanded,
-.ag-theme-tvm-dark .ag-group-contracted,
-.ag-theme-tvm-dark .ag-group-expanded {
+.ag-theme-tvm .ag-group-contracted,
+.ag-theme-tvm .ag-group-expanded {
   margin-right: 6px;
   transition: transform 150ms ease;
 }
 
-.ag-theme-tvm-light .ag-group-expanded,
-.ag-theme-tvm-dark .ag-group-expanded {
+.ag-theme-tvm .ag-group-expanded {
   transform: rotate(90deg);
 }
 
-.ag-theme-tvm-light .ag-row-group-indent,
-.ag-theme-tvm-dark .ag-row-group-indent {
+.ag-theme-tvm .ag-row-group-indent {
   position: relative;
-}
-
-.ag-theme-tvm-light .ag-row-group-indent::before {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background-color: #E5E7EB;
-}
-
-.ag-theme-tvm-dark .ag-row-group-indent::before {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background-color: #2A303D;
 }
 
 /* ============================================================================
    FOCUS & SELECTION STATES
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-cell-focus,
-.ag-theme-tvm-dark .ag-cell-focus {
-  border: 2px solid var(--ag-input-focus-border-color) !important;
+.ag-theme-tvm .ag-cell-focus {
+  border: 2px solid var(--ag-accent-color) !important;
   outline: none;
 }
 
-.ag-theme-tvm-light .ag-has-focus .ag-cell-focus,
-.ag-theme-tvm-dark .ag-has-focus .ag-cell-focus {
-  border: 2px solid var(--ag-input-focus-border-color) !important;
+.ag-theme-tvm .ag-has-focus .ag-cell-focus {
+  border: 2px solid var(--ag-accent-color) !important;
 }
 
 /* ============================================================================
-   FILTER PANEL STYLING (native AG Grid filters)
+   FILTER PANEL STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-filter,
-.ag-theme-tvm-dark .ag-filter {
+.ag-theme-tvm .ag-filter {
   background-color: var(--ag-background-color);
   border: 1px solid var(--ag-border-color);
   border-radius: 6px;
   padding: 12px;
 }
 
-.ag-theme-tvm-light .ag-filter-apply-panel,
-.ag-theme-tvm-dark .ag-filter-apply-panel {
+.ag-theme-tvm .ag-filter-apply-panel {
   padding: 8px;
   border-top: 1px solid var(--ag-border-color);
 }
@@ -317,102 +131,50 @@
    SCROLLBAR STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-body-horizontal-scroll,
-.ag-theme-tvm-light .ag-body-vertical-scroll,
-.ag-theme-tvm-dark .ag-body-horizontal-scroll,
-.ag-theme-tvm-dark .ag-body-vertical-scroll {
+.ag-theme-tvm .ag-body-horizontal-scroll,
+.ag-theme-tvm .ag-body-vertical-scroll {
   scrollbar-width: thin;
 }
 
-.ag-theme-tvm-light .ag-body-horizontal-scroll::-webkit-scrollbar,
-.ag-theme-tvm-light .ag-body-vertical-scroll::-webkit-scrollbar {
+.ag-theme-tvm .ag-body-horizontal-scroll::-webkit-scrollbar,
+.ag-theme-tvm .ag-body-vertical-scroll::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.ag-theme-tvm-light .ag-body-horizontal-scroll::-webkit-scrollbar-track,
-.ag-theme-tvm-light .ag-body-vertical-scroll::-webkit-scrollbar-track {
-  background: #F8F9FA;
-}
-
-.ag-theme-tvm-light .ag-body-horizontal-scroll::-webkit-scrollbar-thumb,
-.ag-theme-tvm-light .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+.ag-theme-tvm .ag-body-horizontal-scroll::-webkit-scrollbar-thumb,
+.ag-theme-tvm .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
   border-radius: 4px;
 }
 
-.ag-theme-tvm-light .ag-body-horizontal-scroll::-webkit-scrollbar-thumb:hover,
-.ag-theme-tvm-light .ag-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
-}
-
-.ag-theme-tvm-dark .ag-body-horizontal-scroll::-webkit-scrollbar,
-.ag-theme-tvm-dark .ag-body-vertical-scroll::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.ag-theme-tvm-dark .ag-body-horizontal-scroll::-webkit-scrollbar-track,
-.ag-theme-tvm-dark .ag-body-vertical-scroll::-webkit-scrollbar-track {
-  background: #1A1F2A;
-}
-
-.ag-theme-tvm-dark .ag-body-horizontal-scroll::-webkit-scrollbar-thumb,
-.ag-theme-tvm-dark .ag-body-vertical-scroll::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 4px;
-}
-
-.ag-theme-tvm-dark .ag-body-horizontal-scroll::-webkit-scrollbar-thumb:hover,
-.ag-theme-tvm-dark .ag-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
-  background: #4B5563;
-}
-
 /* ============================================================================
-   LOADING OVERLAY
+   OVERLAY STYLING
    ============================================================================ */
 
-.ag-theme-tvm-light .ag-overlay-loading-wrapper {
-  background-color: rgba(255, 255, 255, 0.95);
-}
-
-.ag-theme-tvm-dark .ag-overlay-loading-wrapper {
-  background-color: rgba(15, 20, 25, 0.95);
-}
-
-/* ============================================================================
-   NO ROWS OVERLAY
-   ============================================================================ */
-
-.ag-theme-tvm-light .ag-overlay-no-rows-wrapper,
-.ag-theme-tvm-dark .ag-overlay-no-rows-wrapper {
+.ag-theme-tvm .ag-overlay-no-rows-wrapper {
   padding: 24px;
 }
 
-.ag-theme-tvm-light .ag-overlay-no-rows-center,
-.ag-theme-tvm-dark .ag-overlay-no-rows-center {
+.ag-theme-tvm .ag-overlay-no-rows-center {
   color: var(--ag-foreground-color);
   font-size: 12px;
 }
 
 /* ============================================================================
-   SEMANTIC COLOR CLASSES (for voltage state indicators)
+   SEMANTIC COLOR CLASSES (voltage state indicators)
    ============================================================================ */
 
-.ag-theme-tvm-light .voltage-normal,
-.ag-theme-tvm-dark .voltage-normal {
+.ag-theme-tvm .voltage-normal {
   color: #10B981;
   font-weight: 500;
 }
 
-.ag-theme-tvm-light .voltage-warning,
-.ag-theme-tvm-dark .voltage-warning {
+.ag-theme-tvm .voltage-warning {
   color: #F59E0B;
   font-weight: 500;
 }
 
-.ag-theme-tvm-light .voltage-error,
-.ag-theme-tvm-dark .voltage-error {
+.ag-theme-tvm .voltage-error {
   color: #EF4444;
   font-weight: 600;
 }
@@ -421,14 +183,6 @@
    PERFORMANCE OPTIMIZATIONS
    ============================================================================ */
 
-.ag-theme-tvm-light,
-.ag-theme-tvm-dark {
-  /* GPU acceleration without will-change to avoid header repaint issues */
+.ag-theme-tvm {
   transform: translateZ(0);
-}
-
-/* Prevent header blink on resize interaction */
-.ag-theme-tvm-light .ag-header-cell,
-.ag-theme-tvm-dark .ag-header-cell {
-  transition: none;
 }
